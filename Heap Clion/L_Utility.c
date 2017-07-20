@@ -28,6 +28,10 @@ void F_start()
                 F_stampa_heap(Heap);
             break;
 
+            case 3:
+                F_stampa_minmax(Heap);
+
+            break;
             case 0:
                 menu_principale = 0;
             break;
@@ -376,6 +380,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
     Heap->sinistra = F_HeapSx;
     Heap->destra = F_HeapDx;
     Heap->max_min = max_min;
+    Heap->abr_arr = abr_arr;
     switch(abr_arr)
     {
         case 1: // Albero
@@ -782,3 +787,27 @@ void F_stampa_priorita(int elem)
 
 
 
+void F_stampa_minmax(StructHeap Heap)
+{
+    if(Heap->struttura!=NULL)
+    {
+        if(Heap->abr_arr == 1) // Albero
+        {
+            Albero radice = Heap->struttura;
+            F_stampa_priorita(radice->coda->priorita);
+            Heap->StampaElemento(radice->coda->elem);
+            free(radice);
+        }
+        else // Array
+        {
+            Array S = Heap->struttura;
+            F_stampa_priorita(S[0].coda->priorita);
+            Heap->StampaElemento(S[0].coda->elem);
+            free(S);
+        }
+    }
+    else
+        puts("Struttura non presente!\n");
+
+    return;
+}

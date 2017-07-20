@@ -83,4 +83,6 @@ void F_stampa_priorita(int elem);
 typedef void(*StampaTipo) (void *);
 void F_preorder(Albero T,StampaTipo Stampa);
 
+void F_stampa_minmax(StructHeap Heap);
+
 #endif // L_UTILITY_H_INCLUDED

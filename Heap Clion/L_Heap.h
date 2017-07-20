@@ -18,8 +18,8 @@ struct struttura_gestione_heap
 {
     void *struttura;
     int heapsize;
-    //int dimAllocazione;
     int max_min;
+    int abr_arr;
 
     TipoStruttura tipo_struttura;
     TipoElemento tipo_elem;
