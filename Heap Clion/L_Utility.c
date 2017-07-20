@@ -30,8 +30,12 @@ void F_start()
 
             case 3:
                 F_stampa_minmax(Heap);
-
             break;
+
+            case 4:
+                F_estrai_minmax(Heap);
+            break;
+
             case 0:
                 menu_principale = 0;
             break;
@@ -394,6 +398,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
            Heap->tipo_struttura = F_crea_array;
            Heap->Scambio = F_Scambio_Array;
            Heap->Stampa = F_stampa_array;
+           Heap->EstraiMinMax = F_estrai_minmax_array;
         break;
         default:
             puts("Error");
@@ -490,20 +495,6 @@ void F_costruisci_heap(StructHeap Heap)
     }
 
 
-}
-
-int F_HeapSx(int i)
-{
-    i=(2*i)+1;
-
-    return i;
-}
-
-int F_HeapDx(int i)
-{
-    i=(2*i)+2;
-
-    return i;
 }
 
 int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i)
@@ -786,28 +777,40 @@ void F_stampa_priorita(int elem)
 }
 
 
-
-void F_stampa_minmax(StructHeap Heap)
+void *F_estrai_minmax_array(StructHeap Heap)
 {
-    if(Heap->struttura!=NULL)
+    Array new_arr = Heap->struttura;
+
+    if(new_arr!=NULL)
     {
-        if(Heap->abr_arr == 1) // Albero
-        {
-            Albero radice = Heap->struttura;
-            F_stampa_priorita(radice->coda->priorita);
-            Heap->StampaElemento(radice->coda->elem);
-            free(radice);
-        }
-        else // Array
-        {
-            Array S = Heap->struttura;
-            F_stampa_priorita(S[0].coda->priorita);
-            Heap->StampaElemento(S[0].coda->elem);
-            free(S);
-        }
+        Coda minmax=new_arr[0].coda;
+
+        printf("\nL'elemento estratto e':\n");
+        F_stampa_elem_coda(Heap,minmax);
+
+        // DEALLOCA LA CODA
+
+        puts("");
+
+        new_arr[0].coda=new_arr[Heap->heapsize-1].coda;
+        new_arr = (Array) realloc(new_arr, (Heap->heapsize-1) * sizeof(Array));
+        Heap->heapsize=Heap->heapsize-1;
+        //printf("\n%d - %d\n",new_arr[0].coda->priorita,new_arr[1].coda->priorita);
+        Heap->struttura = new_arr;
+
+        F_heapify(Heap,0);
     }
     else
-        puts("Struttura non presente!\n");
+        puts("Error");
+
+    // Stampa l'elemento prima di cancellarlo
+    return  new_arr;
+}
+
+void F_stampa_elem_coda(StructHeap Heap,Coda minmax)
+{
+    F_stampa_priorita(minmax->priorita);
+    Heap->StampaElemento(minmax->elem);
 
     return;
 }

@@ -59,8 +59,7 @@ void *F_crea_intero();
 int F_genera_priorita();
 
 void F_costruisci_heap(StructHeap Heap);
-int F_HeapSx(int i);
-int F_HeapDx(int i);
+
 
 int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i);
 int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas);
@@ -83,6 +82,8 @@ void F_stampa_priorita(int elem);
 typedef void(*StampaTipo) (void *);
 void F_preorder(Albero T,StampaTipo Stampa);
 
-void F_stampa_minmax(StructHeap Heap);
+// build
+void *F_estrai_minmax_array(StructHeap Heap);
+void F_stampa_elem_coda(StructHeap Heap, Coda minmax);
 
 #endif // L_UTILITY_H_INCLUDED

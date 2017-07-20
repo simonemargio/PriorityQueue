@@ -14,6 +14,9 @@ typedef void(*Heapify_scambio) (StructHeap Heap,int,int);
 typedef void(*StampaHeap) (StructHeap Heap);
 typedef void(*StampaTipo) (void *);
 
+// build call
+typedef  void * (*Estrai_minmax) (StructHeap Heap);
+
 struct struttura_gestione_heap
 {
     void *struttura;
@@ -31,6 +34,9 @@ struct struttura_gestione_heap
     StampaHeap Stampa;
     StampaTipo StampaElemento;
 
+    // build
+    Estrai_minmax EstraiMinMax;
+
 };
 
 
@@ -38,5 +44,10 @@ struct struttura_gestione_heap
 StructHeap F_alloca_heap(StructHeap Heap);              // Allocazione della struttura per la gestione di array/alberi heap
 StructHeap F_crea_heap(StructHeap Heap);
 void F_heapify(StructHeap Heap, int i);
+int F_HeapSx(int i);
+int F_HeapDx(int i);
+void F_stampa_minmax(StructHeap Heap);
+StructHeap F_estrai_minmax(StructHeap Heap);
+
 
 #endif // L_HEAP_H_INCLUDED
