@@ -3,9 +3,6 @@
 #include "L_Heap.h"
 //#include "L_Utility.h"
 
-
-
-
 void F_heapify(StructHeap Heap, int i)
 {
     printf("\nSto in heapify con indice:%d\n",i);

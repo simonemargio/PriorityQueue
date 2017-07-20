@@ -61,13 +61,19 @@ int F_genera_priorita();
 void F_costruisci_heap(StructHeap Heap);
 
 
-int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i);
-int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas);
-int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i);
-int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas);
+//int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i);
+int F_FirstCheck_Array_MaxMin(StructHeap Heap,int l,int i);
+//int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas);
+int F_SecondCheck_Array_MaxMin(StructHeap Heap,int r,int mas);
 
-int F_FirstCheck_Albero_Max(StructHeap Heap,int l,int i);
-int F_SecondCheck_Alebro_Max(StructHeap Heap, int r,int mas);
+//int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i);
+//int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas);
+
+//int F_FirstCheck_Albero_Max(StructHeap Heap,int l,int i);
+int F_FirstCheck_Albero_MaxMin(StructHeap Heap,int l,int i);
+//int F_SecondCheck_Alebro_Max(StructHeap Heap, int r,int mas);
+int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas);
+
 void F_Scambio_Albero(StructHeap Heap,int i,int mas);
 
 void F_Scambio_Array(StructHeap Heap,int i,int mas);

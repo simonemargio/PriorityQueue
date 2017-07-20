@@ -392,6 +392,9 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             Heap->tipo_struttura = F_crea_albero;
             Heap->Scambio=F_Scambio_Albero;
             Heap->Stampa = F_stampa_albero;
+
+            Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
+            Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
         break;
 
         case 2: // Array
@@ -399,13 +402,16 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
            Heap->Scambio = F_Scambio_Array;
            Heap->Stampa = F_stampa_array;
            Heap->EstraiMinMax = F_estrai_minmax_array;
+
+           Heap->FirstCheck = F_FirstCheck_Array_MaxMin;
+           Heap->SecondCheck = F_SecondCheck_Array_MaxMin;
         break;
         default:
             puts("Error");
             break;
     }
 
-    switch(max_min)
+   /* switch(max_min)
     {
         case 1: // Minimo
       //  Heap->tipo_min_max = F_crea_minimo;
@@ -415,8 +421,8 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             }
             else
             {
-                Heap->FirstCheck = F_FirstCheck_Array_Min;
-                Heap->SecondCheck = F_SecondCheck_Array_Min;
+           //     Heap->FirstCheck = F_FirstCheck_Array_Min;
+             //   Heap->SecondCheck = F_SecondCheck_Array_Min;
             }
         break;
 
@@ -425,19 +431,23 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             if(abr_arr == 1)
             {
                 puts("Albero MAX");
-                Heap->FirstCheck= F_FirstCheck_Albero_Max;
-                Heap->SecondCheck= F_SecondCheck_Alebro_Max;
+                //Heap->FirstCheck= F_FirstCheck_Albero_Max;
+            //    Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
+                //Heap->SecondCheck= F_SecondCheck_Alebro_Max;
+              //  Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
             }
             else
             {
-               Heap->FirstCheck = F_FirstCheck_Array_Max;
-               Heap->SecondCheck = F_SecondCheck_Array_Max;
+             //   Heap->FirstCheck = F_FirstCheck_Array_Max;
+//               Heap->SecondCheck = F_SecondCheck_Array_Max;
+             //  Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
+               // Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
             }
         break;
         default:
             puts("Error");
             break;
-    }
+    }*/
 
     switch(tipo_heap)
     {
@@ -497,34 +507,66 @@ void F_costruisci_heap(StructHeap Heap)
 
 }
 
-int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i)
+int F_FirstCheck_Array_MaxMin(StructHeap Heap,int l,int i)
 {
 
-    int mas;
+    int mas=i;
     Array S = Heap->struttura;
 
-    if((l<Heap->heapsize) && (S[l].coda->priorita>S[i].coda->priorita))
+    if(l<Heap->heapsize)
     {
-        mas=l;
-       // printf("\nConfronto priorita %d - %d\n",S[l].coda->priorita>S[i].coda->priorita);
+        if(Heap->max_min == 1) // MINIMO
+        {
+            if(S[l].coda->priorita<S[i].coda->priorita)
+            {
+                mas=l;
+            }
+            else
+            {
+                mas=i;
+            }
+
+        } else // MASSIMO
+        {
+            if(S[l].coda->priorita>S[i].coda->priorita)
+            {
+                mas=l;
+            }
+            else
+            {
+                mas=i;
+            }
+        }
     }
-    else
-        mas=i;
 
     return mas;
 }
 
-int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas)
+int F_SecondCheck_Array_MaxMin(StructHeap Heap,int r,int mas)
 {
     Array S = Heap->struttura;
-    if((r<Heap->heapsize) &&(S[r].coda->priorita>S[mas].coda->priorita))
-        mas=r;
 
+    if(r<Heap->heapsize)
+    {
+        if(Heap->max_min == 1) // MINIMO
+        {
+            if(S[r].coda->priorita<S[mas].coda->priorita)
+            {
+                mas=r;
+            }
+        } else // MASSIMO
+        {
+            if(S[r].coda->priorita>S[mas].coda->priorita)
+            {
+                mas=r;
+            }
+        }
 
+    }
     return mas;
 }
 
-int F_FirstCheck_Albero_Max(StructHeap Heap,int l,int i)
+int F_FirstCheck_Albero_MaxMin(StructHeap Heap,int l,int i)
 {
     int mas=i;
 
@@ -539,22 +581,40 @@ int F_FirstCheck_Albero_Max(StructHeap Heap,int l,int i)
             int priorita_l = nodo_l->coda->priorita;
             int priorita_i = nodo_i->coda->priorita;
             printf("\n1 Ho preso le loro due priorira l:%d | i%d\n",priorita_l,priorita_i);
-            if (priorita_l > priorita_i)
+
+            if(Heap->max_min == 1) // MINIMO
             {
-                printf("\n1 |%d e' piu grande di %d\n",priorita_l,priorita_i);
-                mas = l;
-            }
-            else
+                if (priorita_l < priorita_i)
+                {
+                    printf("\n1 |%d e' piu grande di %d\n",priorita_l,priorita_i);
+                    mas = l;
+                }
+                else
+                {
+                    printf("\n1 |%d e' piu piccola di %d\n",priorita_l,priorita_i);
+                    mas = i;
+                }
+
+            } else // MASSIMO
             {
-                printf("\n1 |%d e' piu piccola di %d\n",priorita_l,priorita_i);
-                mas = i;
+                if (priorita_l > priorita_i)
+                {
+                    printf("\n1 |%d e' piu grande di %d\n",priorita_l,priorita_i);
+                    mas = l;
+                }
+                else
+                {
+                    printf("\n1 |%d e' piu piccola di %d\n",priorita_l,priorita_i);
+                    mas = i;
+                }
             }
+
         }
     printf("\n1 Ritorno con priorira mas per ora %d\n",mas);
     return mas;
 }
 
-int F_SecondCheck_Alebro_Max(StructHeap Heap, int r,int mas)
+int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas)
 {
     Albero nodo_r=F_preleva_nodo(Heap,r);
     Albero nodo_mas=F_preleva_nodo(Heap,mas);
@@ -567,11 +627,25 @@ int F_SecondCheck_Alebro_Max(StructHeap Heap, int r,int mas)
             int priorita_r = nodo_r->coda->priorita;
             int priorita_mas = nodo_mas->coda->priorita;
             printf("\n2 Ho preso le loro due priorira r:%d | mas%d\n",priorita_r,priorita_mas);
-            if(priorita_r>priorita_mas)
+
+            if(Heap->max_min == 1) // MINIMO
             {
-                printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
-                mas=r;
+                if(priorita_r<priorita_mas)
+                {
+                    printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
+                    mas=r;
+                }
+
+            } else // MASSIMO
+            {
+                if(priorita_r>priorita_mas)
+                {
+                    printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
+                    mas=r;
+                }
+
             }
+
         }
     printf("\n2 Ritorno con priorira mas definitiva %d\n",mas);
     return mas;
@@ -640,7 +714,7 @@ Albero F_preleva_nodo(StructHeap Heap,int indice) {
     return nodo;
 }*/
 
-int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i)
+/*int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i)
 {
 
     int mas=0;
@@ -656,9 +730,9 @@ int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i)
     else
         mas=i;
     return mas;
-}
+}*/
 
-int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas)
+/*int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas)
 {
     Array S = Heap->struttura;
     if((r<Heap->heapsize) &&(S[r].coda->priorita<S[mas].coda->priorita))
@@ -666,7 +740,7 @@ int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas)
 
 
     return mas;
-}
+}*/
 
 
 
@@ -712,16 +786,6 @@ void F_Scambio_Albero(StructHeap Heap,int i,int mas)
     nodo_mas->coda->priorita = priorita_i;
 
     printf("\nHo terminato lo scambio ora ho in i ho %d. In mas ho %d",nodo_i->coda->priorita,nodo_mas->coda->priorita);
-        //int priorita_i=nodo_i->priorita;
-        //void *telem=nodo_i->elem;
-        //printf("\nPriorita i: %d",nodo_i->priorita);
-    //    nodo_i->priorita=nodo_mas->priorita;
-     //   nodo_i->elem=nodo_mas->elem;
-
-    //    nodo_mas->elem=telem;
-     //   nodo_mas->priorita=priorita_i;
-     //   printf("\nPriorita scambio: %d",nodo_i->priorita);
-
 }
 //////////////////// FINE HEAPIFY ////////////////////////
 
