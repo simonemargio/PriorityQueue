@@ -91,15 +91,15 @@ StructHeap F_estrai_minmax(StructHeap Heap)
     return Heap;
 }
 
-StructHeap F_decrease_key(StructHeap Heap)
+void F_decrease_key(StructHeap Heap)
 {
     if(Heap->struttura!=NULL)
     {
-        Heap->struttura = Heap->DecreaseKey(Heap);
+        Heap->DecreaseKey(Heap);
 
     }
     else
         puts("Struttura non presente!\n");
 
-    return Heap;
+    return;
 }

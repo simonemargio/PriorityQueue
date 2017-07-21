@@ -16,7 +16,7 @@ typedef void(*StampaTipo) (void *);
 typedef  void * (*Estrai_minmax) (StructHeap Heap);
 
 // build
-typedef void *(*Decrease_key) (StructHeap Heap);
+typedef void (*Decrease_key) (StructHeap Heap);
 
 struct struttura_gestione_heap
 {
@@ -51,7 +51,7 @@ int F_HeapSx(int i);
 int F_HeapDx(int i);
 void F_stampa_minmax(StructHeap Heap);
 StructHeap F_estrai_minmax(StructHeap Heap);
-StructHeap F_decrease_key(StructHeap Heap);
+void F_decrease_key(StructHeap Heap);
 
 
 #endif // L_HEAP_H_INCLUDED
