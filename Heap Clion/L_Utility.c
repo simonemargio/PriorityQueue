@@ -39,6 +39,10 @@ void F_start()
                     puts("Presente solo la radice!\n");
             break;
 
+            case 6:
+                F_decrease_key(Heap);
+                break;
+
             case 0:
                 menu_principale = 0;
             break;
@@ -409,6 +413,8 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
 
            Heap->FirstCheck = F_FirstCheck_Array_MaxMin;
            Heap->SecondCheck = F_SecondCheck_Array_MaxMin;
+
+            Heap->DecreaseKey = F_decrease_key_array;
         break;
         default:
             puts("Error");
@@ -866,7 +872,7 @@ void *F_estrai_minmax_array(StructHeap Heap)
         //printf("\n%d - %d\n",new_arr[0].coda->priorita,new_arr[1].coda->priorita);
         Heap->struttura = new_arr;
 
-     //   F_heapify(Heap,0);
+        F_heapify(Heap,0);
     }
     else
         puts("Error");
@@ -912,7 +918,7 @@ void *F_estrai_minmax_albero(StructHeap Heap)
 void F_elimina_foglia(StructHeap Heap)
 {
     Albero ultima_foglia = F_preleva_nodo(Heap,Heap->heapsize-1);
-    ultima_foglia->coda->priorita = -1;
+    ultima_foglia->coda->priorita = -1; // NON SERVE
     Albero padre_foglia = F_preleva_nodo(Heap,((Heap->heapsize-2)/2));
 
 
@@ -939,11 +945,72 @@ void F_elimina_foglia(StructHeap Heap)
     return;
 }
 
+void *F_decrease_key_array(StructHeap Heap)
+{
+    Array new_arr = Heap->struttura;
 
+    puts("\nL'array e':");
+    F_stampa_array(Heap);
+    printf("\nSrivimi il numero di indice (da 1 a N) della priorita' che vuoi cambiare:");
+    int elem_selezionato = F_seleziona(3);
+    int i = F_seleziona_indice_array(Heap,elem_selezionato);
 
+    if(i!=-1)
+    {
+        printf("\nInserisci un valore per la nuova chiave che sia piu' piccolo di (%d):",new_arr[i].coda->priorita);
+        int val = F_seleziona(3);
 
+        if(Heap->max_min == 1) // MINIMO
+            F_esegui_decrease_key_array_min(Heap,i,val);
+        else
+            F_esegui_decrease_key_array_max(Heap,i,val);
+    }
 
+    return new_arr;
+}
 
+void F_esegui_decrease_key_array_max(StructHeap Heap,int i,int val)
+{
+    Array arr = Heap->struttura;
+    if(val > arr[i].coda->priorita ) puts("\nNuova chiave piu' grande!");
+    else
+    {
+        arr[i].coda->priorita = val;
+        F_heapify(Heap,i);
+    }
+    return;
+}
+
+int F_seleziona_indice_array(StructHeap Heap,int elem_selezionato)
+{
+    int indice=-1;
+
+    if(elem_selezionato <= Heap->heapsize)
+    {
+            indice = elem_selezionato -1;
+    } else
+        puts("\nHai selezionato un indice troppo grande!\n");
+
+    return indice;
+}
+
+void F_esegui_decrease_key_array_min(StructHeap Heap,int i,int val)
+{
+    Array arr = Heap->struttura;
+
+    if(val > arr[i].coda->priorita ) puts("\nNuova chiave piu' grande!");
+    else
+    {
+        arr[i].coda->priorita = val;
+        while(i>0 && arr[i].coda->priorita < arr[((i+1/2)-1)].coda->priorita)
+        {
+            F_Scambio_Array(Heap,i,((i+1/2)-1));
+            i = ((i+1/2)-1);
+        }
+    }
+
+    return;
+}
 
 
 

@@ -93,4 +93,9 @@ void *F_estrai_minmax_albero(StructHeap Heap);
 void F_stampa_elem_coda(StructHeap Heap, Coda minmax);
 void F_elimina_foglia(StructHeap Heap);
 
+void * F_decrease_key_array(StructHeap Heap);
+int F_seleziona_indice_array(StructHeap Heap,int elem_selezionato);
+void F_esegui_decrease_key_array_max(StructHeap Heap,int i,int val);
+void F_esegui_decrease_key_array_min(StructHeap Heap,int i,int val);
+
 #endif // L_UTILITY_H_INCLUDED
