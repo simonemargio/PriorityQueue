@@ -991,10 +991,13 @@ void F_esegui_decrease_key_array_min(StructHeap Heap,int i,int val)
     else
     {
         arr[i].coda->priorita = val;
-        while(i>0 && arr[i].coda->priorita < arr[((i+1/2)-1)].coda->priorita)
+        printf("\nINDICE PASSATO: %d\n",i);
+        printf("\nINDICE DEL PADRE: %d\n",((i+1)/2)-1);
+        while(i>0 && arr[i].coda->priorita < arr[(((i+1)/2)-1)].coda->priorita)
         {
-            F_Scambio_Array(Heap,i,((i+1/2)-1));
-            i = ((i+1/2)-1);
+            F_Scambio_Array(Heap,i,(((i+1)/2)-1));
+            i = (((i+1)/2)-1);
+            printf("\nINDICE DEL PADRE CICLO: %d\n",((i+1)/2)-1);
         }
     }
 
@@ -1029,7 +1032,7 @@ void F_decrease_key_albero(StructHeap Heap)
         int val = F_seleziona(3);
 
         if(Heap->max_min == 1) // MINIMO
-          puts("oj");//  F_esegui_decrease_key_albero_min(Heap,i,val);
+            F_esegui_decrease_key_albero_min(Heap,i,val);
         else
             F_esegui_decrease_key_albero_max(Heap,i,val);
     }
@@ -1048,6 +1051,28 @@ void F_esegui_decrease_key_albero_max(StructHeap Heap,int i,int val)
         F_heapify(Heap,i);
     }
 
+    return;
+}
+
+void F_esegui_decrease_key_albero_min(StructHeap Heap,int i, int val)
+{
+    Albero nodo = F_preleva_nodo(Heap,i);
+
+    if(val > nodo->coda->priorita) puts("\nNuova chiave piu' grande!");
+    else
+    {
+        printf("\n->|%d|<- INDICE PASSATO\n",i);
+        nodo->coda->priorita = val;
+        Albero nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+        printf("\n->|%d|<- INDICE\n", ((i+1)/2)-1);
+        while(i > 0 && nodo_padre->coda->priorita > nodo->coda->priorita)
+        {
+            F_Scambio_Albero(Heap,i,((i+1)/2)-1);
+            i = ((i+1)/2)-1;
+            nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+            nodo = F_preleva_nodo(Heap,i);
+        }
+    }
     return;
 }
 

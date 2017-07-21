@@ -100,5 +100,7 @@ void F_esegui_decrease_key_array_min(StructHeap Heap,int i,int val);
 
 void F_decrease_key_albero(StructHeap Heap);
 void F_esegui_decrease_key_albero_max(StructHeap Heap,int i,int val);
+void F_esegui_decrease_key_albero_min(StructHeap Heap,int i, int val);
+
 
 #endif // L_UTILITY_H_INCLUDED
