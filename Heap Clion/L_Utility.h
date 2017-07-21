@@ -88,8 +88,9 @@ void F_stampa_priorita(int elem);
 typedef void(*StampaTipo) (void *);
 void F_preorder(Albero T,StampaTipo Stampa);
 
-// build
 void *F_estrai_minmax_array(StructHeap Heap);
+void *F_estrai_minmax_albero(StructHeap Heap);
 void F_stampa_elem_coda(StructHeap Heap, Coda minmax);
+void F_elimina_foglia(StructHeap Heap);
 
 #endif // L_UTILITY_H_INCLUDED

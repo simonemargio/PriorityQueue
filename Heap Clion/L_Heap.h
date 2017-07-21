@@ -13,8 +13,6 @@ typedef int(*Heapify_check) (StructHeap Heap,int,int);
 typedef void(*Heapify_scambio) (StructHeap Heap,int,int);
 typedef void(*StampaHeap) (StructHeap Heap);
 typedef void(*StampaTipo) (void *);
-
-// build call
 typedef  void * (*Estrai_minmax) (StructHeap Heap);
 
 struct struttura_gestione_heap

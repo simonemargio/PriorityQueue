@@ -33,7 +33,10 @@ void F_start()
             break;
 
             case 4:
-                F_estrai_minmax(Heap);
+                if(Heap->heapsize != 1)
+                    F_estrai_minmax(Heap);
+                else
+                    puts("Presente solo la radice!\n");
             break;
 
             case 0:
@@ -392,6 +395,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             Heap->tipo_struttura = F_crea_albero;
             Heap->Scambio=F_Scambio_Albero;
             Heap->Stampa = F_stampa_albero;
+            Heap->EstraiMinMax = F_estrai_minmax_albero;
 
             Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
             Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
@@ -821,7 +825,7 @@ void F_stampa_albero(StructHeap Heap)
 
 void F_preorder(Albero T,StampaTipo Stampa)
 {
-    if(T)
+    if(T!=NULL)
     {
         F_stampa_priorita(T->coda->priorita);
         Stampa(T->coda->elem);
@@ -862,7 +866,7 @@ void *F_estrai_minmax_array(StructHeap Heap)
         //printf("\n%d - %d\n",new_arr[0].coda->priorita,new_arr[1].coda->priorita);
         Heap->struttura = new_arr;
 
-        F_heapify(Heap,0);
+     //   F_heapify(Heap,0);
     }
     else
         puts("Error");
@@ -878,3 +882,68 @@ void F_stampa_elem_coda(StructHeap Heap,Coda minmax)
 
     return;
 }
+
+void *F_estrai_minmax_albero(StructHeap Heap)
+{
+    Albero new_abr = Heap ->struttura;
+
+    if(new_abr != NULL)
+    {
+        Coda minmax = new_abr->coda;
+
+        printf("\nL'elmento estratto e':\n");
+        F_stampa_elem_coda(Heap,minmax);
+        puts("");
+
+        // Scambio i valori della radice con quelli dell'ultima foglia
+        F_Scambio_Albero(Heap,0,Heap->heapsize-1);
+
+        // Eliminare la foglia (i padri della foglia hanno sempre il nodo / 2 ?!)
+        F_elimina_foglia(Heap);
+
+        F_heapify(Heap,0);
+
+    } else
+        puts("Error");
+
+    return new_abr;
+}
+
+void F_elimina_foglia(StructHeap Heap)
+{
+    Albero ultima_foglia = F_preleva_nodo(Heap,Heap->heapsize-1);
+    ultima_foglia->coda->priorita = -1;
+    Albero padre_foglia = F_preleva_nodo(Heap,((Heap->heapsize-2)/2));
+
+
+    F_stampa_elem_coda(Heap,padre_foglia->coda);
+
+
+    if(padre_foglia->ptrDx != NULL)
+    {
+        puts("\nHO MESSO DESTRA NULL");
+        padre_foglia->ptrDx = NULL;
+    }
+    else{
+      if(padre_foglia->ptrSx != NULL)
+      {
+          puts("\nHO MESSO SINISTRA NULL");
+          padre_foglia->ptrSx = NULL;
+      }
+    }
+
+    // DEALLOCARE ULTIMA FOGLIA
+
+    Heap->heapsize=Heap->heapsize-1;
+
+    return;
+}
+
+
+
+
+
+
+
+
+
