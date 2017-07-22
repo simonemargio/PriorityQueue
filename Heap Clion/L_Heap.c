@@ -111,4 +111,16 @@ void F_increase_key(StructHeap Heap)
     }
     else
         puts("Struttura non presente!\n");
+    return;
+}
+
+void F_inserisci_elemento(StructHeap Heap)
+{
+    if(Heap->struttura!=NULL)
+    {
+        Heap->InserisciElem(Heap);
+    }
+    else
+        puts("Struttura non presente!\n");
+    return;
 }

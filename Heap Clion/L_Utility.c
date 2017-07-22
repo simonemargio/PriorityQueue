@@ -4,6 +4,7 @@
 #include <time.h>
 //#include <math.h>
 #include "L_Heap.h"
+#include <limits.h>
 #define DIMARRMASK 32
 //#include "L_Utility.h"
 
@@ -27,7 +28,9 @@ void F_start()
             case 1:
                 F_stampa_heap(Heap);
             break;
-
+            case 2:
+                F_inserisci_elemento(Heap);
+                break;
             case 3:
                 F_stampa_minmax(Heap);
             break;
@@ -409,6 +412,8 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
 
             Heap->DecreaseKey = F_decrease_key_albero;
             Heap->IncreaseKey = F_increase_key_albero;
+
+            Heap->InserisciElem = F_inserisci_elemento_albero;
         break;
 
         case 2: // Array
@@ -422,6 +427,8 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
 
             Heap->DecreaseKey = F_decrease_key_array;
             Heap->IncreaseKey = F_increase_key_array;
+
+            Heap->InserisciElem = F_inserisci_elemento_array;
 
         break;
         default:
@@ -473,6 +480,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             puts("Ineri");
             Heap->tipo_elem = F_crea_intero;
             Heap->StampaElemento = F_stampa_intero;
+            Heap->PrendiInput = F_prendi_intero;
         break;
 
         case 2: // Float
@@ -1150,7 +1158,7 @@ void F_increase_key_albero(StructHeap Heap)
     if(i!=-1)
     {
         Albero cambio_nodo = F_preleva_nodo(Heap,i);
-        printf("\nInserisci un valore per la nuova chiave che sia piu' piccolo di (%d):",cambio_nodo->coda->priorita);
+        printf("\nInserisci un valore per la nuova chiave che sia piu' grande di (%d):",cambio_nodo->coda->priorita);
         int val = F_seleziona(3);
 
         if(Heap->max_min == 1) // MINIMO
@@ -1195,5 +1203,136 @@ void F_esegui_increase_key_albero_min(StructHeap Heap,int i, int val)
     return;
 }
 
+void F_inserisci_elemento_array(StructHeap Heap)
+{
+    Array new_arr = Heap->struttura;
+
+    puts("\nL'array e':");
+    F_stampa_array(Heap);
+    Coda elemento_coda = F_genera_elememento_coda_utente(Heap);
+    new_arr = (Array) realloc(new_arr, (Heap->heapsize+1) * sizeof(Array));
+    Heap->heapsize=Heap->heapsize+1;
+    new_arr[Heap->heapsize-1].coda=elemento_coda;
+    Heap->struttura = new_arr;
+    printf("\n\nELM: %d \n\n",new_arr[Heap->heapsize-1].coda->priorita);
+    int i = Heap->heapsize-1;
+
+    if(Heap->max_min==1) // MINIMO
+    {
+        printf("\n\n%d\n\n",i);
+        while(i>0 && new_arr[i].coda->priorita < new_arr[(((i+1)/2)-1)].coda->priorita)
+        {
+            F_Scambio_Array(Heap,i,(((i+1)/2)-1));
+            i = (((i+1)/2)-1);
+        }
+    }
+    else
+    {
+        printf("\n\n%d\n\n",i);
+        while(i>0 && new_arr[i].coda->priorita > new_arr[(((i+1)/2)-1)].coda->priorita)
+            {
+                F_Scambio_Array(Heap,i,(((i+1)/2)-1));
+                i = (((i+1)/2)-1);
+            }
+    }
+    return;
+}
+
+void F_inserisci_elemento_albero(StructHeap Heap)
+{
+   Albero T = Heap->struttura;
+
+    puts("L'albero e':");
+    F_stampa_albero(Heap);
+    Coda elemento_coda = F_genera_elememento_coda_utente(Heap);
+    T = F_inserisci_nodo_albero(T,elemento_coda,Heap->heapsize);
+    Heap->heapsize=Heap->heapsize+1;
+    Heap->struttura = T;
+    int i = Heap->heapsize-1;
+    Albero nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+    Albero nodo = F_preleva_nodo(Heap,i);
+
+    if(Heap->max_min==1) // MINIMO
+    {
+        while(i > 0 && nodo_padre->coda->priorita > nodo->coda->priorita)
+        {
+            F_Scambio_Albero(Heap,i,((i+1)/2)-1);
+            i = ((i+1)/2)-1;
+            nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+            nodo = F_preleva_nodo(Heap,i);
+        }
+    }
+    else
+    {
+        while(i > 0 && nodo_padre->coda->priorita < nodo->coda->priorita)
+        {
+            F_Scambio_Albero(Heap,i,((i+1)/2)-1);
+            i = ((i+1)/2)-1;
+            nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+            nodo = F_preleva_nodo(Heap,i);
+        }
+    }
+
+    return;
+}
 
 
+void *F_prendi_intero()
+{
+    /* DICHIARAZIONI VARIABILI */
+    char tmp[]="**********",c='*';
+    int intero_preso=0,i=0,flag=0;
+
+    printf("\nTipologia di elemento di heap: INTERI.\nI valori vengono presi in modulo.\nInserire un valore intero (Max: %d):",INT_MAX);
+
+    do
+    {
+        while( i<10 && (c= (char) getchar()) != '\n' && c != EOF )
+        {
+            if(c>='0' && c<='9')
+            {
+                tmp[i]=c;
+                i++;
+            }
+
+        }
+        sscanf(tmp,"%d",&intero_preso);
+
+        if(intero_preso<0) // Superato il liminte viene preso un valore negativo. Si necessita quindi di <0 e non >INT_MAX
+        {
+            printf("Valore inserito maggiore del limite massimo!\nInserisci di nuovo:");
+            while('\n'!=getchar());
+
+            /* Inizializzo vettore */
+            for(i=0;i<11+2;i++)
+                tmp[i]='*';
+
+            i=0;
+        }
+        else // Valore corretto
+            flag=1;
+
+    }while(flag==0);
+
+    int *elemento=malloc(sizeof(int));
+    memcpy(elemento,&intero_preso,sizeof(int));
+
+    return elemento;
+}
+
+Coda F_genera_elememento_coda_utente(StructHeap Heap)
+{
+    Coda nuovo_elem=(struct struttura_elemento_coda *)malloc(sizeof(struct struttura_elemento_coda));
+
+    printf("\nInserisci la priorita' del nuovo elemento:");
+    int priorita = F_seleziona(4);
+    printf("\nInserisci l'elemento che vuoi sia associato alla priorita' (%d)",priorita);
+    void * elem = Heap->PrendiInput();
+
+    nuovo_elem->priorita=priorita;
+    nuovo_elem->elem=elem;
+
+    printf("Priorita inserita: %d - Elem inserito: %d\n",nuovo_elem->priorita,*((int *)nuovo_elem->elem));
+
+    return nuovo_elem;
+}

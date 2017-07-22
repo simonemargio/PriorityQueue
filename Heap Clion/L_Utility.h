@@ -109,4 +109,10 @@ void F_increase_key_albero(StructHeap Heap);
 void F_esegui_increase_key_albero_max(StructHeap Heap,int i,int val);
 void F_esegui_increase_key_albero_min(StructHeap Heap,int i, int val);
 
+void F_inserisci_elemento_array(StructHeap Heap);
+void *F_prendi_intero();
+Coda F_genera_elememento_coda_utente(StructHeap Heap);
+
+void F_inserisci_elemento_albero(StructHeap Heap);
+
 #endif // L_UTILITY_H_INCLUDED
