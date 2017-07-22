@@ -57,25 +57,22 @@ int F_salta_zero_bit(int *bits);
 
 void *F_crea_intero();
 int F_genera_priorita();
-
 void F_costruisci_heap(StructHeap Heap);
-
-
-//int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i);
-int F_FirstCheck_Array_MaxMin(StructHeap Heap,int l,int i);
-//int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas);
-int F_SecondCheck_Array_MaxMin(StructHeap Heap,int r,int mas);
 
 //int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i);
 //int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas);
-
 //int F_FirstCheck_Albero_Max(StructHeap Heap,int l,int i);
-int F_FirstCheck_Albero_MaxMin(StructHeap Heap,int l,int i);
 //int F_SecondCheck_Alebro_Max(StructHeap Heap, int r,int mas);
+//int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas);
+//int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i);
+
+int F_FirstCheck_Array_MaxMin(StructHeap Heap,int l,int i);
+int F_SecondCheck_Array_MaxMin(StructHeap Heap,int r,int mas);
+
+int F_FirstCheck_Albero_MaxMin(StructHeap Heap,int l,int i);
 int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas);
 
 void F_Scambio_Albero(StructHeap Heap,int i,int mas);
-
 void F_Scambio_Array(StructHeap Heap,int i,int mas);
 
 void F_stampa_heap(StructHeap Heap);
@@ -93,8 +90,9 @@ void *F_estrai_minmax_albero(StructHeap Heap);
 void F_stampa_elem_coda(StructHeap Heap, Coda minmax);
 void F_elimina_foglia(StructHeap Heap);
 
-void F_decrease_key_array(StructHeap Heap);
 int F_seleziona_indice(StructHeap Heap,int elem_selezionato);
+
+void F_decrease_key_array(StructHeap Heap);
 void F_esegui_decrease_key_array_max(StructHeap Heap,int i,int val);
 void F_esegui_decrease_key_array_min(StructHeap Heap,int i,int val);
 
@@ -102,5 +100,13 @@ void F_decrease_key_albero(StructHeap Heap);
 void F_esegui_decrease_key_albero_max(StructHeap Heap,int i,int val);
 void F_esegui_decrease_key_albero_min(StructHeap Heap,int i, int val);
 
+
+void F_increase_key_array(StructHeap Heap);
+void F_esegui_increase_key_array_max(StructHeap Heap,int i,int val);
+void F_esegui_increase_key_array_min(StructHeap Heap,int i,int val);
+
+void F_increase_key_albero(StructHeap Heap);
+void F_esegui_increase_key_albero_max(StructHeap Heap,int i,int val);
+void F_esegui_increase_key_albero_min(StructHeap Heap,int i, int val);
 
 #endif // L_UTILITY_H_INCLUDED

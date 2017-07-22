@@ -96,10 +96,19 @@ void F_decrease_key(StructHeap Heap)
     if(Heap->struttura!=NULL)
     {
         Heap->DecreaseKey(Heap);
-
     }
     else
         puts("Struttura non presente!\n");
 
     return;
+}
+
+void F_increase_key(StructHeap Heap)
+{
+    if(Heap->struttura!=NULL)
+    {
+        Heap->IncreaseKey(Heap);
+    }
+    else
+        puts("Struttura non presente!\n");
 }

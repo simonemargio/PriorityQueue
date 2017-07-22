@@ -39,6 +39,9 @@ void F_start()
                     puts("Presente solo la radice!\n");
             break;
 
+            case 5:
+                F_increase_key(Heap);
+                break;
             case 6:
                 F_decrease_key(Heap);
                 break;
@@ -405,6 +408,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
 
             Heap->DecreaseKey = F_decrease_key_albero;
+            Heap->IncreaseKey = F_increase_key_albero;
         break;
 
         case 2: // Array
@@ -417,6 +421,8 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
            Heap->SecondCheck = F_SecondCheck_Array_MaxMin;
 
             Heap->DecreaseKey = F_decrease_key_array;
+            Heap->IncreaseKey = F_increase_key_array;
+
         break;
         default:
             puts("Error");
@@ -1075,4 +1081,119 @@ void F_esegui_decrease_key_albero_min(StructHeap Heap,int i, int val)
     }
     return;
 }
+
+
+// INCREASE
+
+void F_increase_key_array(StructHeap Heap)
+{
+    Array new_arr = Heap->struttura;
+
+    puts("\nL'array e':");
+    F_stampa_array(Heap);
+    printf("\nSrivimi il numero di indice (da 1 a N) della priorita' che vuoi cambiare:");
+    int elem_selezionato = F_seleziona(3);
+    int i = F_seleziona_indice(Heap,elem_selezionato);
+
+    if(i!=-1)
+    {
+        printf("\nInserisci un valore per la nuova chiave che sia piu' grande di (%d):",new_arr[i].coda->priorita);
+        int val = F_seleziona(3);
+
+        if(Heap->max_min == 1) // MINIMO
+            F_esegui_increase_key_array_min(Heap,i,val);
+        else
+            F_esegui_increase_key_array_max(Heap,i,val);
+    }
+
+    return;
+}
+
+void F_esegui_increase_key_array_max(StructHeap Heap,int i,int val)
+{
+    Array arr = Heap->struttura;
+
+    if(val < arr[i].coda->priorita ) puts("\nNuova chiave piu' piccola!");
+    else
+    {
+        arr[i].coda->priorita = val;
+        while(i>0 && arr[i].coda->priorita > arr[(((i+1)/2)-1)].coda->priorita)
+        {
+            F_Scambio_Array(Heap,i,(((i+1)/2)-1));
+            i = (((i+1)/2)-1);
+        }
+    }
+    return;
+}
+
+void F_esegui_increase_key_array_min(StructHeap Heap,int i,int val)
+{
+    Array arr = Heap->struttura;
+    if(val < arr[i].coda->priorita ) puts("\nNuova chiave piu' piccola!");
+    else
+    {
+        arr[i].coda->priorita = val;
+        F_heapify(Heap,i);
+    }
+    return;
+}
+
+
+void F_increase_key_albero(StructHeap Heap)
+{
+    puts("\nL'albero e':");
+    F_stampa_albero(Heap);
+    printf("\nSrivimi il numero di indice (da 1 a N) della priorita' che vuoi cambiare:");
+    int elem_selezionato = F_seleziona(3);
+    int i = F_seleziona_indice(Heap,elem_selezionato);
+
+    if(i!=-1)
+    {
+        Albero cambio_nodo = F_preleva_nodo(Heap,i);
+        printf("\nInserisci un valore per la nuova chiave che sia piu' piccolo di (%d):",cambio_nodo->coda->priorita);
+        int val = F_seleziona(3);
+
+        if(Heap->max_min == 1) // MINIMO
+            F_esegui_increase_key_albero_min(Heap,i,val);
+        else
+            F_esegui_increase_key_albero_max(Heap,i,val);
+    }
+
+    return;
+}
+
+void F_esegui_increase_key_albero_max(StructHeap Heap,int i,int val)
+{
+    Albero nodo = F_preleva_nodo(Heap,i);
+
+    if(val < nodo->coda->priorita) puts("\nNuova chiave piu' piccola!");
+    else
+    {
+        nodo->coda->priorita = val;
+        Albero nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+        while(i > 0 && nodo_padre->coda->priorita < nodo->coda->priorita)
+        {
+            F_Scambio_Albero(Heap,i,((i+1)/2)-1);
+            i = ((i+1)/2)-1;
+            nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
+            nodo = F_preleva_nodo(Heap,i);
+        }
+    }
+    return;
+}
+
+void F_esegui_increase_key_albero_min(StructHeap Heap,int i, int val)
+{
+    Albero nodo = F_preleva_nodo(Heap,i);
+
+    if(val < nodo->coda->priorita) puts("\nNuova chiave piu' piccola!");
+    else
+    {
+        nodo->coda->priorita = val;
+        F_heapify(Heap,i);
+    }
+    return;
+}
+
+
 
