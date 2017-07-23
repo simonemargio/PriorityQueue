@@ -124,3 +124,15 @@ void F_inserisci_elemento(StructHeap Heap)
         puts("Struttura non presente!\n");
     return;
 }
+
+void F_cancella_elemento(StructHeap Heap)
+{
+    if(Heap->struttura!=NULL)
+    {
+        Heap->CancellaElem(Heap);
+    }
+    else
+        puts("Struttura non presente!\n");
+
+    return;
+}

@@ -19,6 +19,11 @@ typedef void (*Increase_key) (StructHeap Heap);
 typedef void (*Inserisci_elemento) (StructHeap Heap);
 typedef void *(*Prendi_input) (void);
 
+// build
+typedef  void (*Cancella_elemento) (StructHeap Heap);
+//typedef  void (*Distruggi_elemento) (StructHeap Heap,int);
+typedef  void (*Distruggi_tipo_elemento) (StructHeap Heap, int);
+
 struct struttura_gestione_heap
 {
     void *struttura;
@@ -40,6 +45,11 @@ struct struttura_gestione_heap
     Increase_key IncreaseKey;
     Inserisci_elemento InserisciElem;
     Prendi_input PrendiInput;
+
+    Cancella_elemento CancellaElem;
+
+    //Distruggi_elemento DistruggiElem;
+    Distruggi_tipo_elemento DistruggiTipoElem;
 };
 
 
@@ -54,5 +64,6 @@ StructHeap F_estrai_minmax(StructHeap Heap);
 void F_decrease_key(StructHeap Heap);
 void F_increase_key(StructHeap Heap);
 void F_inserisci_elemento(StructHeap Heap);
+void F_cancella_elemento(StructHeap Heap);
 
 #endif // L_HEAP_H_INCLUDED

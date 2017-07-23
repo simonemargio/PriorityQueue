@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-//#include <math.h>
 #include "L_Heap.h"
 #include <limits.h>
 #define DIMARRMASK 32
@@ -48,7 +47,9 @@ void F_start()
             case 6:
                 F_decrease_key(Heap);
                 break;
-
+            case 7:
+                F_cancella_elemento(Heap);
+                break;
             case 0:
                 menu_principale = 0;
             break;
@@ -129,7 +130,6 @@ int F_tipo_heap()
     printf("\nSeleziona tramite valore numerico:");
     scelta=F_seleziona(1);
 
-
     return scelta;
 }
 
@@ -191,11 +191,6 @@ StructHeap F_crea_array(StructHeap Heap)
     for(i=0;i<Heap->heapsize;i++)
     {
         S[i].coda=F_genera_elemento_coda(Heap);
-
-    //    S[i].elemArray=Heap->tipo_elem();
-    //    printf("\n->ELM %d\n",*((int *)S[i].elemArray));
-    //    S[i].priorita=F_genera_priorita();
-    //    printf("\n->PRI %d\n",S[i].priorita);
     }
 
     Heap->struttura = S;
@@ -225,12 +220,6 @@ StructHeap F_crea_albero(StructHeap Heap)
     {
         Coda nuovo_elem=F_genera_elemento_coda(Heap);
 
-      //  elemento=Heap->tipo_elem();
-      //  priorita=F_genera_priorita();
-      //  printf("Priorita: %d - Elemento: %d\n",priorita,*((int *)elemento));
-
-        //T=F_inserisci_nodo_albero(T,elemento,priorita,i);
-
         T=F_inserisci_nodo_albero(T,nuovo_elem,i);
     }
 
@@ -249,17 +238,6 @@ Albero F_inserisci_nodo_albero(Albero T,Coda nuovo_elem,int indice)
     }
     else
     {
-        /* Attenzione: uso l'indice + 1
-         * Se uso indice so esattamente in che posto mettere il nodo. All'inizio è 0+1=1 però sti cazzi essendo T null
-         * viene creato la rafice. Poi l'indice diventa 1+1=2, e uno in binario è 00000000010, come detto il pof
-         * si eliminano tutti gli zero e il primo 1 che si trova, in questo caso ottengo 0 che e quindi mi sposto a sinistra
-         * dove è proprio che devo andare.
-         * Poi l'indice diventa 3, in binario 00000011, elimino tutti gli zero e il primo 1 e ottengo 1, mi sposto a destra.
-         * Poi 4, 000000100, ottengo 00, mi sposto due volte a sinistra e così via...
-         *
-         * Quindi trovare un modo per portare un intero a binario, conto passo passo tutti gli zero fino al primo 1, tutti
-         * i numeri successivi mi dicono dove mi devo spostare
-         */
         Albero Tmp = T;
         int *bits = F_ottieni_bit(indice+1);
 
@@ -322,67 +300,10 @@ int *F_ottieni_bit(int n)
     return bits;
 }
 
-/*Albero F_inserisci_nodo_albero(Albero T,Coda nuovo_elem,int indice)
-{
-    if(indice==0)
-    {
-        T=F_alloca_nodo_albero(nuovo_elem);
-    }
-    else
-    {
-        int i=0,j=0,maschera=0,heapsize=indice+1,prim_elem=0;
-        Albero tmp = T;
-
-        maschera = (int) pow(2, (int)log2(heapsize));
-        while(j<log2((double)(maschera))+1)
-        {
-            i=(maschera>>j)&(heapsize);
-
-            if(i>0)
-            {
-                if(prim_elem == 0)
-                {
-                    prim_elem = 1;
-                }
-                else
-                {
-                    puts("Destra");
-                    if(tmp->ptrDx == NULL)
-                    {
-                        tmp->ptrDx = F_inserisci_nodo_albero(tmp,nuovo_elem,0);
-                       // break;
-                    }
-                    else
-                    {
-                        tmp = tmp->ptrDx;
-                    }
-                }
-            }
-            else
-            {
-                puts("Sinistra");
-                if(tmp->ptrSx == NULL)
-                {
-                    tmp->ptrSx = F_inserisci_nodo_albero(tmp,nuovo_elem,0);
-                   // break;
-                }
-                else
-                {
-                    tmp = tmp->ptrSx;
-                }
-            }
-          j++;
-        }
-    }
-
-    return T;
-}*/
 
 Albero F_alloca_nodo_albero(Coda nuovo_elem)
 {
     Albero nuovo_nodo=(struct struttura_nodo_albero *)malloc(sizeof(struct struttura_nodo_albero));
-    //nuovo_nodo->elem=elemento;
-    //nuovo_nodo->priorita=priorita;
     nuovo_nodo->coda=nuovo_elem;
     nuovo_nodo->ptrDx=NULL;
     nuovo_nodo->ptrSx=NULL;
@@ -401,19 +322,16 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
     switch(abr_arr)
     {
         case 1: // Albero
-            puts("Albero");
             Heap->tipo_struttura = F_crea_albero;
             Heap->Scambio=F_Scambio_Albero;
             Heap->Stampa = F_stampa_albero;
             Heap->EstraiMinMax = F_estrai_minmax_albero;
-
             Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
             Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
-
             Heap->DecreaseKey = F_decrease_key_albero;
             Heap->IncreaseKey = F_increase_key_albero;
-
             Heap->InserisciElem = F_inserisci_elemento_albero;
+            Heap->CancellaElem = F_cancella_elemento_albero;
         break;
 
         case 2: // Array
@@ -421,58 +339,17 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
            Heap->Scambio = F_Scambio_Array;
            Heap->Stampa = F_stampa_array;
            Heap->EstraiMinMax = F_estrai_minmax_array;
-
            Heap->FirstCheck = F_FirstCheck_Array_MaxMin;
            Heap->SecondCheck = F_SecondCheck_Array_MaxMin;
-
-            Heap->DecreaseKey = F_decrease_key_array;
-            Heap->IncreaseKey = F_increase_key_array;
-
-            Heap->InserisciElem = F_inserisci_elemento_array;
-
+           Heap->DecreaseKey = F_decrease_key_array;
+           Heap->IncreaseKey = F_increase_key_array;
+           Heap->InserisciElem = F_inserisci_elemento_array;
+           Heap->CancellaElem = F_cancella_elemento_array;
         break;
         default:
             puts("Error");
             break;
     }
-
-   /* switch(max_min)
-    {
-        case 1: // Minimo
-      //  Heap->tipo_min_max = F_crea_minimo;
-            if(abr_arr == 1)
-            {
-                    puts("");
-            }
-            else
-            {
-           //     Heap->FirstCheck = F_FirstCheck_Array_Min;
-             //   Heap->SecondCheck = F_SecondCheck_Array_Min;
-            }
-        break;
-
-        case 2: // MAssimo
-      //      Heap->tipo_min_max = F_crea_massimo;
-            if(abr_arr == 1)
-            {
-                puts("Albero MAX");
-                //Heap->FirstCheck= F_FirstCheck_Albero_Max;
-            //    Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
-                //Heap->SecondCheck= F_SecondCheck_Alebro_Max;
-              //  Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
-            }
-            else
-            {
-             //   Heap->FirstCheck = F_FirstCheck_Array_Max;
-//               Heap->SecondCheck = F_SecondCheck_Array_Max;
-             //  Heap->FirstCheck = F_FirstCheck_Albero_MaxMin;
-               // Heap->SecondCheck = F_SecondCheck_Alebro_MaxMin;
-            }
-        break;
-        default:
-            puts("Error");
-            break;
-    }*/
 
     switch(tipo_heap)
     {
@@ -481,6 +358,8 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             Heap->tipo_elem = F_crea_intero;
             Heap->StampaElemento = F_stampa_intero;
             Heap->PrendiInput = F_prendi_intero;
+            if(abr_arr==2) Heap->DistruggiTipoElem = F_distruggi_elem_array_intero;
+            else puts("Ci metto distruggi elem albero");
         break;
 
         case 2: // Float
@@ -498,7 +377,6 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
         default:
             puts("Error");
             break;
-
     }
 
 }
@@ -509,7 +387,7 @@ void *F_crea_intero()
     void *elemento=malloc(sizeof(int));
     int i=rand();
     memcpy(elemento,&i,sizeof(int));
- //  printf("\n->->----------------------Elem creato:%d\n",*(int *)elemento);
+
     return elemento;
 }
 
@@ -517,6 +395,7 @@ int F_genera_priorita()
 {
     int i=rand() % (100 + 1 - 1) + 1;
     printf("Priorita: %d\n",i);
+
     return i;
 }
 
@@ -530,12 +409,11 @@ void F_costruisci_heap(StructHeap Heap)
         n--;
     }
 
-
+    return;
 }
 
 int F_FirstCheck_Array_MaxMin(StructHeap Heap,int l,int i)
 {
-
     int mas=i;
     Array S = Heap->struttura;
 
@@ -589,6 +467,7 @@ int F_SecondCheck_Array_MaxMin(StructHeap Heap,int r,int mas)
         }
 
     }
+
     return mas;
 }
 
@@ -599,11 +478,9 @@ int F_FirstCheck_Albero_MaxMin(StructHeap Heap,int l,int i)
     Albero nodo_l=F_preleva_nodo(Heap,l);
     Albero nodo_i=F_preleva_nodo(Heap,i);
     printf("\n1 Preso il nodo di indice l:%d | i:%d\n",l,i);
-        if(l < Heap->heapsize)
-        {
 
-         //   int priorita_l = nodo_l->priorita;
-          //  int priorita_i = nodo_i->priorita;
+    if(l < Heap->heapsize)
+        {
             int priorita_l = nodo_l->coda->priorita;
             int priorita_i = nodo_i->coda->priorita;
             printf("\n1 Ho preso le loro due priorira l:%d | i%d\n",priorita_l,priorita_i);
@@ -647,9 +524,6 @@ int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas)
     printf("\n2 Preso il nodo di indice r:%d | mas:%d\n",r,mas);
         if(r<Heap->heapsize)
         {
-           // int priorita_r=nodo_r->priorita;
-           // int priorita_mas=nodo_mas->priorita;
-
             int priorita_r = nodo_r->coda->priorita;
             int priorita_mas = nodo_mas->coda->priorita;
             printf("\n2 Ho preso le loro due priorira r:%d | mas%d\n",priorita_r,priorita_mas);
@@ -661,7 +535,6 @@ int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas)
                     printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
                     mas=r;
                 }
-
             } else // MASSIMO
             {
                 if(priorita_r>priorita_mas)
@@ -669,11 +542,11 @@ int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas)
                     printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
                     mas=r;
                 }
-
             }
 
         }
     printf("\n2 Ritorno con priorira mas definitiva %d\n",mas);
+
     return mas;
 }
 
@@ -701,74 +574,6 @@ Albero F_preleva_nodo(StructHeap Heap,int indice)
     return nodo;
 }
 
-/*
-Albero F_preleva_nodo(StructHeap Heap,int indice) {
-    int i = 0, j = 0, maschera = 0, heapsize = indice + 1, prim_elem = 0;
-    Albero nodo = Heap->struttura;
-
-
-    if (heapsize > 1)
-    {
-        maschera = (int) pow(2, (int) log2(heapsize));
-
-        while (nodo != NULL && j < log2((double) (maschera))+1)
-        {
-            printf("\nJ:%d\n",j);
-            i=(maschera>>j)&(heapsize);
-
-            if (i > 0)
-            {
-                if (prim_elem == 0)
-                {
-                    prim_elem = 1;
-                } else
-                {
-                    puts("Destra 1");
-                    nodo = nodo->ptrDx;
-                }
-            }
-            else
-            {
-                puts("Sinistra 1");
-                nodo = nodo->ptrSx;
-            }
-            j++;
-        }
-
-    }
-
-    return nodo;
-}*/
-
-/*int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i)
-{
-
-    int mas=0;
-    Array S = Heap->struttura;
-
-
-
-    if((l<Heap->heapsize) && (S[l].coda->priorita<S[i].coda->priorita))
-    {
-        mas=l;
-      //  printf("\nConfronto priorita %d - %d\n",S[l].priorita,S[i].priorita);
-    }
-    else
-        mas=i;
-    return mas;
-}*/
-
-/*int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas)
-{
-    Array S = Heap->struttura;
-    if((r<Heap->heapsize) &&(S[r].coda->priorita<S[mas].coda->priorita))
-        mas=r;
-
-
-    return mas;
-}*/
-
-
 
 void F_Scambio_Array(StructHeap Heap,int i,int mas)
 {
@@ -780,24 +585,16 @@ void F_Scambio_Array(StructHeap Heap,int i,int mas)
 
     S[i].coda->priorita = S[mas].coda->priorita;
     S[i].coda->elem = S[mas].coda->elem;
-
-    //S[i].priorita=S[mas].priorita;
-    //S[i].elemArray=S[mas].elemArray;
-
     S[mas].coda->priorita = tpriorita;
     S[mas].coda->elem = telem;
 
-    //S[mas].priorita = tpriorita;
-    //S[mas].elemArray = telem;
+    return;
 }
 
 void F_Scambio_Albero(StructHeap Heap,int i,int mas)
 {
-
-
     Albero nodo_i=F_preleva_nodo(Heap,i);
     Albero nodo_mas=F_preleva_nodo(Heap,mas);
-
 
     int priorita_i = nodo_i->coda->priorita;
     void *telem = nodo_i->coda->elem;
@@ -812,6 +609,8 @@ void F_Scambio_Albero(StructHeap Heap,int i,int mas)
     nodo_mas->coda->priorita = priorita_i;
 
     printf("\nHo terminato lo scambio ora ho in i ho %d. In mas ho %d",nodo_i->coda->priorita,nodo_mas->coda->priorita);
+
+    return;
 }
 //////////////////// FINE HEAPIFY ////////////////////////
 
@@ -820,6 +619,8 @@ void F_Scambio_Albero(StructHeap Heap,int i,int mas)
 void F_stampa_heap(StructHeap Heap)
 {
     Heap->Stampa(Heap);
+
+    return;
 }
 
 
@@ -829,20 +630,21 @@ void F_stampa_array(StructHeap Heap)
     Array S = Heap->struttura;
 
     puts("Ecco l'array:");
-
-
     for(i=0;i<Heap->heapsize;i++)
     {
         F_stampa_priorita(S[i].coda->priorita);
         Heap->StampaElemento(S[i].coda->elem);
     }
 
+    return;
 }
 
 void F_stampa_albero(StructHeap Heap)
 {
     Albero T = Heap->struttura;
     F_preorder(T,Heap->StampaElemento);
+
+    return;
 }
 
 void F_preorder(Albero T,StampaTipo Stampa)
@@ -854,16 +656,22 @@ void F_preorder(Albero T,StampaTipo Stampa)
         F_preorder(T->ptrSx,Stampa);
         F_preorder(T->ptrDx,Stampa);
     }
+
+    return;
 }
 
 void F_stampa_intero(void *elem)
 {
     printf(" %d|",*((int *)elem));
+
+    return;
 }
 
 void F_stampa_priorita(int elem)
 {
-     printf("|%d -",elem);
+    printf("|%d -",elem);
+
+    return;
 }
 
 
@@ -1187,6 +995,7 @@ void F_esegui_increase_key_albero_max(StructHeap Heap,int i,int val)
             nodo = F_preleva_nodo(Heap,i);
         }
     }
+
     return;
 }
 
@@ -1335,4 +1144,98 @@ Coda F_genera_elememento_coda_utente(StructHeap Heap)
     printf("Priorita inserita: %d - Elem inserito: %d\n",nuovo_elem->priorita,*((int *)nuovo_elem->elem));
 
     return nuovo_elem;
+}
+
+void F_cancella_elemento_array(StructHeap Heap)
+{
+    Array new_arr = Heap->struttura;
+
+    puts("L'array e':");
+    F_stampa_array(Heap);
+    printf("\nSeleziona l'elemento da cancellare:");
+    int elem_selezionato = F_seleziona(3);
+    int i = F_seleziona_indice(Heap,elem_selezionato);
+
+    if(i!=-1)
+    {
+        new_arr[i].coda->priorita = new_arr[Heap->heapsize-1].coda->priorita;
+        new_arr[i].coda->elem = new_arr[Heap->heapsize-1].coda->elem;
+
+        if(new_arr[Heap->heapsize-1].coda->priorita > new_arr[i].coda->priorita)
+        {
+            puts("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+            if(Heap->max_min==1)
+                F_esegui_decrease_key_array_min(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
+            else
+                F_esegui_increase_key_array_max(Heap,i,new_arr[Heap->heapsize-1].coda->priorita); // MAS
+        } else
+        {
+            if(Heap->max_min==1)
+                F_esegui_increase_key_array_min(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
+            else
+                F_esegui_decrease_key_array_max(Heap,i,new_arr[Heap->heapsize-1].coda->priorita); // MAS
+        }
+
+        F_distruggi_elem(Heap,Heap->heapsize-1);
+        free(new_arr[Heap->heapsize-1].coda);
+        new_arr = (Array) realloc(new_arr, (Heap->heapsize-1) * sizeof(Array));
+        Heap->struttura = new_arr;
+        Heap->heapsize=Heap->heapsize-1;
+    }
+
+    return;
+}
+
+void F_cancella_elemento_albero(StructHeap Heap)
+{
+    Albero T = Heap->struttura;
+    puts("L'albero e':");
+    F_stampa_albero(Heap);
+    printf("\nSeleziona l'elemento da cancellare:");
+    int elem_selezionato = F_seleziona(3);
+    int i = F_seleziona_indice(Heap,elem_selezionato);
+
+    if(i!=-1)
+    {
+        Albero foglia = F_preleva_nodo(Heap,Heap->heapsize-1);
+        Albero nodo = F_preleva_nodo(Heap,i);
+        //int priorita_vecchia=nodo->coda->priorita;
+        nodo->coda->priorita = foglia->coda->priorita;
+        nodo->coda->elem = foglia->coda->elem;
+
+        puts("O11111111K");
+        if(foglia->coda->priorita > nodo->coda->priorita)
+        {
+            if(Heap->max_min==1)
+            F_esegui_decrease_key_albero_min(Heap,nodo->coda->priorita,foglia->coda->priorita);
+            else
+            F_esegui_increase_key_albero_max(Heap,nodo->coda->priorita,foglia->coda->priorita);
+        } else
+        {
+            if(Heap->max_min==1)
+                F_esegui_increase_key_albero_min(Heap,nodo->coda->priorita,foglia->coda->priorita);
+            else
+                F_esegui_decrease_key_albero_max(Heap,nodo->coda->priorita,foglia->coda->priorita);
+        }
+
+
+        Heap->heapsize = Heap->heapsize-1;
+        Heap->struttura = T;
+    }
+
+    return;
+}
+
+void F_distruggi_elem(StructHeap Heap,int indice)
+{
+    Heap->DistruggiTipoElem(Heap,indice);
+    return;
+}
+
+void F_distruggi_elem_array_intero(StructHeap Heap,int indice)
+{
+    Array A = Heap->struttura;
+    printf("\nELIMINO %d\n",A[indice].coda->priorita);
+    free(((int *)A[indice].coda->elem));
+    return;
 }

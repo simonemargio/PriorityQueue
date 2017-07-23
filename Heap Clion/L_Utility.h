@@ -6,8 +6,6 @@
 
 struct struttura_nodo_albero
 {
-   // void *elem;
-   // int priorita;
     struct struttura_elemento_coda *coda;
     struct struttura_nodo_albero *ptrSx;
     struct struttura_nodo_albero *ptrDx;
@@ -16,8 +14,6 @@ struct struttura_nodo_albero
 struct struttura_elemento_array
 {
     struct struttura_elemento_coda *coda;
-    //int priorita;
-    //void * elemArray;
 };
 
 struct struttura_elemento_coda
@@ -45,9 +41,9 @@ Coda F_genera_elemento_coda(StructHeap Heap);
 StructHeap F_crea_array(StructHeap Heap);
 StructHeap F_crea_albero(StructHeap Heap);
 
-//Albero F_inserisci_nodo_albero(Albero T,void *elemento, int priorita,int indice);
+
 Albero F_inserisci_nodo_albero(Albero T,Coda nuovo_elem,int indice);
-//Albero F_alloca_nodo_albero(void *elemento,int priorita);
+
 Albero F_alloca_nodo_albero(Coda nuovo_elem);
 Albero F_preleva_nodo(StructHeap Heap,int indice);
 
@@ -59,12 +55,6 @@ void *F_crea_intero();
 int F_genera_priorita();
 void F_costruisci_heap(StructHeap Heap);
 
-//int F_FirstCheck_Array_Min(StructHeap Heap,int l,int i);
-//int F_SecondCheck_Array_Min(StructHeap Heap,int r,int mas);
-//int F_FirstCheck_Albero_Max(StructHeap Heap,int l,int i);
-//int F_SecondCheck_Alebro_Max(StructHeap Heap, int r,int mas);
-//int F_SecondCheck_Array_Max(StructHeap Heap,int r,int mas);
-//int F_FirstCheck_Array_Max(StructHeap Heap,int l,int i);
 
 int F_FirstCheck_Array_MaxMin(StructHeap Heap,int l,int i);
 int F_SecondCheck_Array_MaxMin(StructHeap Heap,int r,int mas);
@@ -114,5 +104,11 @@ void *F_prendi_intero();
 Coda F_genera_elememento_coda_utente(StructHeap Heap);
 
 void F_inserisci_elemento_albero(StructHeap Heap);
+
+void F_cancella_elemento_array(StructHeap Heap);
+void F_cancella_elemento_albero(StructHeap Heap);
+
+void F_distruggi_elem(StructHeap Heap,int indice);
+void F_distruggi_elem_array_intero(StructHeap Heap,int indice);
 
 #endif // L_UTILITY_H_INCLUDED
