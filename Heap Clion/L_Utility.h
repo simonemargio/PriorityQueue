@@ -51,7 +51,7 @@ Albero F_preleva_nodo(StructHeap Heap,int indice);
 int *F_ottieni_bit(int indice);
 int F_salta_zero_bit(int *bits);
 
-void *F_crea_intero();
+
 int F_genera_priorita();
 void F_costruisci_heap(StructHeap Heap);
 
@@ -69,7 +69,22 @@ void F_stampa_heap(StructHeap Heap);
 void F_stampa_array(StructHeap Heap);
 void F_stampa_albero(StructHeap Heap);
 
+void *F_crea_intero();
+void *F_prendi_intero();
 void F_stampa_intero(void *elem);
+
+void *F_crea_float();
+void *F_prendi_float();
+void F_stampa_float(void *elem);
+
+void *F_crea_carattere();
+void *F_prendi_carattere();
+void F_stampa_carattere(void *elem);
+
+void *F_crea_stringa();
+void *F_prendi_stringa();
+void F_stampa_stringa(void *elem);
+
 void F_stampa_priorita(int elem);
 
 typedef void(*StampaTipo) (void *);
@@ -100,7 +115,7 @@ void F_esegui_increase_key_albero_max(StructHeap Heap,int i,int val);
 void F_esegui_increase_key_albero_min(StructHeap Heap,int i, int val);
 
 void F_inserisci_elemento_array(StructHeap Heap);
-void *F_prendi_intero();
+
 Coda F_genera_elememento_coda_utente(StructHeap Heap);
 
 void F_inserisci_elemento_albero(StructHeap Heap);

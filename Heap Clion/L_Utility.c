@@ -5,6 +5,7 @@
 #include "L_Heap.h"
 #include <limits.h>
 #define DIMARRMASK 32
+#define DIM_STRINGA 11
 //#include "L_Utility.h"
 
 void F_start()
@@ -363,15 +364,21 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
         break;
 
         case 2: // Float
-      //      Heap->tipo_elem = F_crea_float;
+           Heap->tipo_elem = F_crea_float;
+           Heap->StampaElemento = F_stampa_float;
+           Heap->PrendiInput = F_prendi_float;
         break;
 
         case 3: // caratteri
-     //       Heap->tipo_elem = F_crea_carattere;
+            Heap->tipo_elem = F_crea_carattere;
+            Heap->StampaElemento = F_stampa_carattere;
+            Heap->PrendiInput = F_prendi_carattere;
         break;
 
         case 4: // Stringhe
-      //      Heap->tipo_elem = F_crea_stringa;
+            Heap->tipo_elem = F_crea_stringa;
+            Heap->StampaElemento = F_stampa_stringa;
+            Heap->PrendiInput = F_prendi_stringa;
         break;
 
         default:
@@ -381,7 +388,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
 
 }
 
-
+// INTERI
 void *F_crea_intero()
 {
     void *elemento=malloc(sizeof(int));
@@ -390,6 +397,218 @@ void *F_crea_intero()
 
     return elemento;
 }
+
+void F_stampa_intero(void *elem)
+{
+    printf(" %d|",*((int *)elem));
+
+    return;
+}
+
+// FLOAT
+void *F_crea_float()
+{
+    float f=(float)rand()/(float)RAND_MAX;
+    f=(rand()%100)+f;
+    void *elemento=malloc(sizeof(float));
+    memcpy(elemento,&f,sizeof(float));
+
+    return elemento;
+}
+
+void *F_prendi_float()
+{
+    /* DICHIARAZIONE VARIABILI */
+    char tmp[DIM_STRINGA+3],c='*';
+    int i=0;
+    float ftemp;
+
+    printf("\nTipologia di elemento di heap: FLOAT. Inserire la parte intera:");
+
+
+    while( i<DIM_STRINGA+2 && (c= (char) getchar()) != '\n' && c != EOF )
+    {
+        if(c>='0' && c<='9')
+        {
+            tmp[i]=c;
+            i++;
+        }
+
+    }
+
+    tmp[i]='.';
+    i++;
+
+    if(i<DIM_STRINGA+2)
+    {
+        printf("Ora inserire la Parte decimale:");
+
+        while( i<DIM_STRINGA+2 && (c= (char) getchar()) != '\n' && c != EOF )
+        {
+            if(c>='0' && c<='9')
+            {
+                tmp[i]=c;
+                i++;
+            }
+
+        }
+        tmp[i]='\0';
+    }
+
+    sscanf(tmp,"%f",&ftemp);
+
+    void *elemento=malloc(sizeof(float));
+    memcpy(elemento,&ftemp,sizeof(float));
+
+    return elemento;
+}
+
+void F_stampa_float(void *elem)
+{
+    printf(" %f|",*((float *)elem));
+    return;
+}
+
+// CARATTERE
+void *F_crea_carattere()
+{
+    /* DICHIARAZIONE VARIABILI */
+    int min=0,max=0;
+    char c;
+
+    void *elemento=malloc(sizeof(char));
+    int scelta_carattere=rand()%2;
+
+    switch(scelta_carattere)
+    {
+        case 0:
+            min=65,max=90;
+            break;
+
+        case 1:
+            min=97,max=122;
+            break;
+        default:
+            puts("Errore creazione carattere!");
+            break;
+
+    }
+    c= (char) (rand() % (max - min) + min);
+    memcpy(elemento,&c,sizeof(char));
+
+    return elemento;
+}
+
+void *F_prendi_carattere()
+{
+    /* DICHIARAZIONE VARIABILI*/
+    char c='*';
+    void *elemento=NULL;
+    int flag=1;
+    printf("\nTipologia di elemento di heap: CARATTERE. Inserire un solo carattere.\nEventuali altri caratteri verranno ignorati (Max: 1):");
+
+    while(flag==1)
+    {
+        c= (char) getchar();
+        if((c>='a' && c<='z') || (c>='A' && c<='Z'))
+        {
+            flag=0;
+        }
+        else
+        {
+            while('\n'!=getchar());
+            printf("Non e' stato inserito un carattere, riprovare:");
+        }
+    }
+
+    while('\n'!=getchar());
+    elemento=malloc(sizeof(char));
+    memcpy(elemento,&c,sizeof(char));
+
+    return elemento;
+    return NULL;
+}
+void F_stampa_carattere(void *elem)
+{
+    printf(" %c|",*((char *)elem));
+    return;
+}
+
+// STRINGA
+void *F_crea_stringa()
+{
+    /* DICHIARAZIONE VARIABILI*/
+    int dim_stringa=0,scelta_carattere=0,i=0,max=0,min=0;
+    char *stringa=NULL;
+
+    /* Randomizzo la lunghezza della stringa */
+    dim_stringa=4+(rand()%DIM_STRINGA);
+
+    /* Alloco lo spazio necessario */
+    stringa=malloc(sizeof(char)*dim_stringa);
+
+    while(i<dim_stringa-1) // Ciclo eseguito dim_stringa -1 per inserire nell'ultimo elemento \0
+    {
+        scelta_carattere=rand()%3;
+
+        switch(scelta_carattere)
+        {
+            /* Lettere A-Z maiuscole */
+            case 0:
+                min=65,max=90;
+                break;
+
+                /* Lettere A-Z minuscole */
+            case 1:
+                min=97,max=122;
+                break;
+
+                /* Numeri 0-9 */
+            case 2:
+                min=48,max=57;
+                break;
+            default:
+                puts("Errore creazione stringa!");
+                break;
+        }
+
+        stringa[i]= (char) (rand() % (max - min ) + min);
+        i++;
+    }
+    stringa[i]='\0';
+
+    return stringa;
+}
+void *F_prendi_stringa()
+{
+    /* DICHIARAZIONE VARIABILI */
+    char *tmp=NULL,c='*';
+    void *stringa_uscita=NULL;
+    int i=0;
+
+    tmp=(char *)malloc((DIM_STRINGA+3)*sizeof(char)); // Default: Max stringa 14 (4+DIM_STRINGA).
+
+    printf("\nInserisci la stringa (MAX:%d):",DIM_STRINGA+2);
+
+    for(i=0; (i<DIM_STRINGA+2 && (c= (char) getchar()) != '\n' && c != EOF); i++)
+    {
+        tmp[i]=c;
+    }
+    tmp[i]='\0';
+
+    stringa_uscita=malloc(i*sizeof(char)); // Allocazione del giusto spazio per stringhe minori di DIM_STRINGA
+    strcpy(stringa_uscita,tmp); // Copia della stringa nello spazio abitio al suo contenimento
+    free(tmp);
+
+    return stringa_uscita;
+}
+
+void F_stampa_stringa(void *elem)
+{
+    printf(" %s|",((char *)elem));
+    return;
+}
+
 
 int F_genera_priorita()
 {
@@ -660,12 +879,6 @@ void F_preorder(Albero T,StampaTipo Stampa)
     return;
 }
 
-void F_stampa_intero(void *elem)
-{
-    printf(" %d|",*((int *)elem));
-
-    return;
-}
 
 void F_stampa_priorita(int elem)
 {
@@ -1141,7 +1354,7 @@ Coda F_genera_elememento_coda_utente(StructHeap Heap)
     nuovo_elem->priorita=priorita;
     nuovo_elem->elem=elem;
 
-    printf("Priorita inserita: %d - Elem inserito: %d\n",nuovo_elem->priorita,*((int *)nuovo_elem->elem));
+    //printf("Priorita inserita: %d - Elem inserito: %d\n",nuovo_elem->priorita,*((int *)nuovo_elem->elem));
 
     return nuovo_elem;
 }
