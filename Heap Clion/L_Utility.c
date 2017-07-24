@@ -360,7 +360,7 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
             Heap->StampaElemento = F_stampa_intero;
             Heap->PrendiInput = F_prendi_intero;
             if(abr_arr==2) Heap->DistruggiTipoElem = F_distruggi_elem_array_intero;
-            else puts("Ci metto distruggi elem albero");
+            else Heap->DistruggiTipoElem = F_distruggi_elem_albero_intero;
         break;
 
         case 2: // Float
@@ -1361,8 +1361,8 @@ Coda F_genera_elememento_coda_utente(StructHeap Heap)
 
 void F_cancella_elemento_array(StructHeap Heap)
 {
-    Array new_arr = Heap->struttura;
 
+    Array new_arr = Heap->struttura;
     puts("L'array e':");
     F_stampa_array(Heap);
     printf("\nSeleziona l'elemento da cancellare:");
@@ -1371,37 +1371,33 @@ void F_cancella_elemento_array(StructHeap Heap)
 
     if(i!=-1)
     {
-        new_arr[i].coda->priorita = new_arr[Heap->heapsize-1].coda->priorita;
-        new_arr[i].coda->elem = new_arr[Heap->heapsize-1].coda->elem;
-
         if(new_arr[Heap->heapsize-1].coda->priorita > new_arr[i].coda->priorita)
         {
-            puts("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-            if(Heap->max_min==1)
-                F_esegui_decrease_key_array_min(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
+            if(Heap->max_min==1) // MINIMO
+                F_esegui_increase_key_array_min(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
             else
-                F_esegui_increase_key_array_max(Heap,i,new_arr[Heap->heapsize-1].coda->priorita); // MAS
+                F_esegui_increase_key_array_max(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
         } else
         {
             if(Heap->max_min==1)
-                F_esegui_increase_key_array_min(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
+                F_esegui_decrease_key_array_min(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
             else
-                F_esegui_decrease_key_array_max(Heap,i,new_arr[Heap->heapsize-1].coda->priorita); // MAS
+                F_esegui_decrease_key_array_max(Heap,i,new_arr[Heap->heapsize-1].coda->priorita);
         }
 
-        F_distruggi_elem(Heap,Heap->heapsize-1);
-        free(new_arr[Heap->heapsize-1].coda);
-        new_arr = (Array) realloc(new_arr, (Heap->heapsize-1) * sizeof(Array));
-        Heap->struttura = new_arr;
+        // DEALLOCA L'ELEMENTO
+        Heap->DistruggiTipoElem(Heap,Heap->heapsize-1);
         Heap->heapsize=Heap->heapsize-1;
     }
+
 
     return;
 }
 
 void F_cancella_elemento_albero(StructHeap Heap)
 {
-    Albero T = Heap->struttura;
+    //Albero T = Heap->struttura;
+
     puts("L'albero e':");
     F_stampa_albero(Heap);
     printf("\nSeleziona l'elemento da cancellare:");
@@ -1410,45 +1406,70 @@ void F_cancella_elemento_albero(StructHeap Heap)
 
     if(i!=-1)
     {
-        Albero foglia = F_preleva_nodo(Heap,Heap->heapsize-1);
-        Albero nodo = F_preleva_nodo(Heap,i);
-        //int priorita_vecchia=nodo->coda->priorita;
-        nodo->coda->priorita = foglia->coda->priorita;
-        nodo->coda->elem = foglia->coda->elem;
+        Albero foglia = F_preleva_nodo(Heap, Heap->heapsize - 1);
+        Albero  padre_foglia = F_preleva_nodo(Heap,((((Heap->heapsize-1)+1)/2)-1));
 
-        puts("O11111111K");
-        if(foglia->coda->priorita > nodo->coda->priorita)
+        printf("\nI %d - - HPS %d",i,Heap->heapsize);
+
+        if(Heap->heapsize>1 && i!=Heap->heapsize-1)
         {
-            if(Heap->max_min==1)
-            F_esegui_decrease_key_albero_min(Heap,nodo->coda->priorita,foglia->coda->priorita);
-            else
-            F_esegui_increase_key_albero_max(Heap,nodo->coda->priorita,foglia->coda->priorita);
-        } else
-        {
-            if(Heap->max_min==1)
-                F_esegui_increase_key_albero_min(Heap,nodo->coda->priorita,foglia->coda->priorita);
-            else
-                F_esegui_decrease_key_albero_max(Heap,nodo->coda->priorita,foglia->coda->priorita);
+            Albero nodo = F_preleva_nodo(Heap, i);
+            printf("\nELEM SELEZIONATO: %d",nodo->coda->priorita);
+            if (foglia->coda->priorita > nodo->coda->priorita) {
+                if (Heap->max_min == 1) // MINIMO
+                    F_esegui_increase_key_albero_min(Heap, i, foglia->coda->priorita);
+                else
+                    F_esegui_increase_key_albero_max(Heap, i, foglia->coda->priorita);
+            } else {
+                if (Heap->max_min == 1)
+                    F_esegui_decrease_key_albero_min(Heap, i, foglia->coda->priorita);
+                else
+                    F_esegui_decrease_key_albero_max(Heap, i, foglia->coda->priorita);
+            }
         }
 
 
-        Heap->heapsize = Heap->heapsize-1;
-        Heap->struttura = T;
-    }
+        // DEALLOCA FOGLIA
+        printf("\nHEPS:%d\n",Heap->heapsize);
+        Heap->DistruggiTipoElem(Heap,Heap->heapsize-1);
 
+        if(Heap->heapsize-1==0)
+        {
+            Heap->struttura=NULL;
+        } else
+        {
+            int figliodxsn = ((Heap->heapsize-1)%2);
+            if(figliodxsn==0) padre_foglia->ptrDx=NULL;
+            else padre_foglia->ptrSx=NULL;
+        }
+
+        free(foglia);
+
+        Heap->heapsize=Heap->heapsize-1;
+       // Heap->struttura = T;
+
+    }
     return;
 }
 
+/*
 void F_distruggi_elem(StructHeap Heap,int indice)
 {
     Heap->DistruggiTipoElem(Heap,indice);
     return;
-}
+}*/
 
 void F_distruggi_elem_array_intero(StructHeap Heap,int indice)
 {
     Array A = Heap->struttura;
     printf("\nELIMINO %d\n",A[indice].coda->priorita);
     free(((int *)A[indice].coda->elem));
+    return;
+}
+void F_distruggi_elem_albero_intero(StructHeap Heap,int indice)
+{
+    Albero nodo = F_preleva_nodo(Heap,indice);
+    printf("\nELIMINO %d\n",nodo->coda->priorita);
+    free(((int *)nodo->coda->elem));
     return;
 }
