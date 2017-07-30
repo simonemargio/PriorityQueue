@@ -18,6 +18,7 @@ typedef void (*Decrease_key) (StructHeap Heap);
 typedef void (*Increase_key) (StructHeap Heap);
 typedef void (*Inserisci_elemento) (StructHeap Heap);
 typedef void *(*Prendi_input) (void);
+typedef void (*Dealloca) (StructHeap Heap);
 
 // build
 typedef  void (*Cancella_elemento) (StructHeap Heap);
@@ -50,6 +51,7 @@ struct struttura_gestione_heap
 
     //Distruggi_elemento DistruggiElem;
     Distruggi_tipo_elemento DistruggiTipoElem;
+    Dealloca DeallocaStruttura;
 };
 
 

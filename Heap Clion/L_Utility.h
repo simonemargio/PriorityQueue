@@ -31,7 +31,7 @@ typedef struct struttura_gestione_heap *StructHeap;
 
 void F_start();         // Funzione iniziale
 int F_menu_principale(int tipo);        // Stampa il menu' in cui l'utente puo' svolgere azioni sull'heap
-int F_seleziona(int dim);               // Chiede all'untete un valore numerico (generalemente usato per selezionare la scelta in nei menu')
+int F_seleziona(int dim,char minimo,char massimo,int escludi);               // Chiede all'untete un valore numerico (generalemente usato per selezionare la scelta in nei menu')
 StructHeap F_info_heap(StructHeap Heap);    // Alloca la struttura in base alle scelte dell'utente
 int F_tipo_heap();      // Menu' per la richiesta del tipo di elmento dello heap: intero, carattere, float, stringa
 int F_max_min_heap();   // Menu' per la richiesta del tipo di heap: minimo o massimo
@@ -125,7 +125,10 @@ void F_cancella_elemento_albero(StructHeap Heap);
 
 //void F_distruggi_elem(StructHeap Heap,int indice);
 void F_distruggi_elem_array_intero(StructHeap Heap,int indice);
-
 void F_distruggi_elem_albero_intero(StructHeap Heap,int indice);
+
+void F_dealloca_array(StructHeap Heap);
+void F_dealloca_albero(StructHeap Heap);
+void F__dealloca_albero(Albero T);
 
 #endif // L_UTILITY_H_INCLUDED
