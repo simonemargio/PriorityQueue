@@ -48,8 +48,8 @@ Albero F_alloca_nodo_albero(Coda nuovo_elem);   // Crea un nuovo nodo
 Albero F_preleva_nodo(StructHeap Heap,int indice); // Preleva un nodo in base all'indisce preso
 
 /* Maschera */
-int *F_ottieni_bit(int indice);
-int F_salta_zero_bit(int *bits);
+int *F_ottieni_bit(int indice); // Crea un vettore contenente il valore numerico in binario per la posizione del nodo dell'albero completo
+int F_salta_zero_bit(int *bits); // Salta i bit pari a zero
 
 
 int F_genera_priorita();
@@ -130,5 +130,6 @@ void F_distruggi_elem_albero_intero(StructHeap Heap,int indice);
 void F_dealloca_array(StructHeap Heap);
 void F_dealloca_albero(StructHeap Heap);
 void F__dealloca_albero(Albero T);
+void F_stampa_minmax(StructHeap Heap);
 
 #endif // L_UTILITY_H_INCLUDED

@@ -3,21 +3,24 @@
 #include "L_Heap.h"
 //#include "L_Utility.h"
 
+/* Funzione per il ripristino della proprieta' heap */
 void F_heapify(StructHeap Heap, int i)
 {
-    printf("\nSto in heapify con indice:%d\n",i);
+    /* Callback chiamate:
+     * sinista/destra: richiama le funzioni F_HeapSx/F_HeapDx. Utilizzate per entrambe le strutture array/albero.
+     * Si e' preferito introdurle come callback nel caso in cui si voglia aggiungere una nuova struttura senza alterare
+     * la funzione F_heapify.
+     * FirstCheck: richiama le funzioni: F_FirstCheck_Albero||array_MaxMin
+     * SecondCheck: richiama le funzioni: F_SecondCheck_Albero||array_MaxMin
+     * Scambio: richiama le sunzioni: F_Scambio_Albero||array
+     * */
     int l = Heap->sinistra(i);
-
     int r = Heap->destra(i);
-    printf("\nl:%d | r:%d\n",l,r);
     int mas = Heap->FirstCheck(Heap,l,i);
-    printf("\nMas:%d\n",mas);
     mas = Heap->SecondCheck(Heap,r,mas);
-    printf("\nMas finale:%d\n",mas);
-    printf("\nConfronto %d con %d",mas,i);
+
     if(mas!=i)
     {
-        printf("\nSono diversi\n");
         Heap->Scambio(Heap,i,mas);
         F_heapify(Heap,mas);
     }
@@ -25,6 +28,7 @@ void F_heapify(StructHeap Heap, int i)
     return;
 }
 
+/* Indice elemento sinistro */
 int F_HeapSx(int i)
 {
     i=(2*i)+1;
@@ -32,6 +36,7 @@ int F_HeapSx(int i)
     return i;
 }
 
+/* Indice elemento destro */
 int F_HeapDx(int i)
 {
     i=(2*i)+2;
@@ -48,41 +53,20 @@ StructHeap F_alloca_heap(StructHeap Heap)
     return Heap;
 }
 
+/* Funzione per la creazione del tipo di struttura specificata dall'utente */
 StructHeap F_crea_heap(StructHeap Heap)
 {
-    Heap=Heap->tipo_struttura(Heap);
+    Heap=Heap->tipo_struttura(Heap); // Richiama: F_crea_albero||array
 
     return Heap;
 }
 
-void F_stampa_minmax(StructHeap Heap)
-{
-    if(Heap->struttura!=NULL)
-    {
-        if(Heap->abr_arr == 1) // Albero
-        {
-            Albero radice = Heap->struttura;
-            F_stampa_priorita(radice->coda->priorita);
-            Heap->StampaElemento(radice->coda->elem);
-        }
-        else // Array
-        {
-            Array S = Heap->struttura;
-            F_stampa_priorita(S[0].coda->priorita);
-            Heap->StampaElemento(S[0].coda->elem);
-        }
-    }
-    else
-        puts("Struttura non presente!\n");
-
-    return;
-}
-
+/* Funzione per l'estrazione ed eliminazione del primo elemento */
 StructHeap F_estrai_minmax(StructHeap Heap)
 {
     if(Heap->struttura!=NULL)
     {
-        Heap->struttura = Heap->EstraiMinMax(Heap);
+        Heap->struttura = Heap->EstraiMinMax(Heap); // Richiama: F_estrai_minmax_albero||array
 
     }
     else
@@ -91,11 +75,12 @@ StructHeap F_estrai_minmax(StructHeap Heap)
     return Heap;
 }
 
+/* Funzione per il decremento della priorita' di un elemento scelto */
 void F_decrease_key(StructHeap Heap)
 {
     if(Heap->struttura!=NULL)
     {
-        Heap->DecreaseKey(Heap);
+        Heap->DecreaseKey(Heap); // Richiama: F_decrease_key_albero||array
     }
     else
         puts("Struttura non presente!\n");
@@ -103,33 +88,36 @@ void F_decrease_key(StructHeap Heap)
     return;
 }
 
+/* Funzione per l'incremento della priorita' di un elemento scelto */
 void F_increase_key(StructHeap Heap)
 {
     if(Heap->struttura!=NULL)
     {
-        Heap->IncreaseKey(Heap);
+        Heap->IncreaseKey(Heap); // Richiama: F_increase_key_albero||array
     }
     else
         puts("Struttura non presente!\n");
     return;
 }
 
+/* Funzione per l'inserimento di un elemento dato dall'utente */
 void F_inserisci_elemento(StructHeap Heap)
 {
     if(Heap->struttura!=NULL)
     {
-        Heap->InserisciElem(Heap);
+        Heap->InserisciElem(Heap); // Richiama: F_inserisci_elemento_albero||array
     }
     else
         puts("Struttura non presente!\n");
     return;
 }
 
+/* Funzione per la cancellazione di un elemento scelto dall'utente */
 void F_cancella_elemento(StructHeap Heap)
 {
     if(Heap->struttura!=NULL)
     {
-        Heap->CancellaElem(Heap);
+        Heap->CancellaElem(Heap);   // Richiama: F_cancella_elemento_albero||array
     }
     else
         puts("Struttura non presente!\n");
