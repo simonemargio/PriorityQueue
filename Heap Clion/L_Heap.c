@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "L_Heap.h"
-//#include "L_Utility.h"
+#include "L_Utility.h"
 
 /* Funzione per il ripristino della proprieta' heap */
 void F_heapify(StructHeap Heap, int i)
@@ -24,8 +24,6 @@ void F_heapify(StructHeap Heap, int i)
         Heap->Scambio(Heap,i,mas);
         F_heapify(Heap,mas);
     }
-
-    return;
 }
 
 /* Indice elemento sinistro */
@@ -67,7 +65,6 @@ StructHeap F_estrai_minmax(StructHeap Heap)
     if(Heap->struttura!=NULL)
     {
         Heap->struttura = Heap->EstraiMinMax(Heap); // Richiama: F_estrai_minmax_albero||array
-
     }
     else
         puts("Struttura non presente!\n");
@@ -84,8 +81,6 @@ void F_decrease_key(StructHeap Heap)
     }
     else
         puts("Struttura non presente!\n");
-
-    return;
 }
 
 /* Funzione per l'incremento della priorita' di un elemento scelto */
@@ -97,7 +92,6 @@ void F_increase_key(StructHeap Heap)
     }
     else
         puts("Struttura non presente!\n");
-    return;
 }
 
 /* Funzione per l'inserimento di un elemento dato dall'utente */
@@ -109,7 +103,6 @@ void F_inserisci_elemento(StructHeap Heap)
     }
     else
         puts("Struttura non presente!\n");
-    return;
 }
 
 /* Funzione per la cancellazione di un elemento scelto dall'utente */
@@ -121,6 +114,4 @@ void F_cancella_elemento(StructHeap Heap)
     }
     else
         puts("Struttura non presente!\n");
-
-    return;
 }

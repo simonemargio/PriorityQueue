@@ -4,7 +4,7 @@
 
 typedef struct struttura_gestione_heap *StructHeap;
 
-/* Callback */
+/* Callback (info in struttura_gestione_heap) */
 typedef StructHeap (*TipoStruttura) (StructHeap Heap);
 typedef void *(*TipoElemento) (void);
 typedef int(*Heapify_sxdx) (int);
@@ -25,27 +25,27 @@ typedef  void (*Distruggi_tipo_elemento) (StructHeap Heap, int);
 struct struttura_gestione_heap
 {
     void *struttura;
-    int heapsize;
-    int max_min;
-    int abr_arr;
+    int heapsize;       // Mantiene l'informazione sul numero di elementi
+    int max_min;        // Mantiene l'informazione sul tipo di heap: minimo o massimo
+    int abr_arr;        // Mantiene l'informazione sul costrutto di heap: array o albero
 
-    TipoStruttura tipo_struttura;
-    TipoElemento tipo_elem;
-    Heapify_sxdx sinistra;
-    Heapify_sxdx destra;
-    Heapify_check FirstCheck;
-    Heapify_check SecondCheck;
-    Heapify_scambio Scambio;
-    StampaHeap Stampa;
-    StampaTipo StampaElemento;
-    Estrai_minmax EstraiMinMax;
-    Decrease_key DecreaseKey;
-    Increase_key IncreaseKey;
-    Inserisci_elemento InserisciElem;
-    Prendi_input PrendiInput;
-    Cancella_elemento CancellaElem;
-    Distruggi_tipo_elemento DistruggiTipoElem;
-    Dealloca DeallocaStruttura;
+    TipoStruttura tipo_struttura;   // Call: F_crea_albero - F_crea_array
+    TipoElemento tipo_elem;         // Call: F_crea_intero/float/carattere/stringa
+    Heapify_sxdx sinistra;          // Call: F_heapSx (ritorno figlio sx di un elemento)
+    Heapify_sxdx destra;            // Call: F_heapDx (ritorno figlio dx di un elemento)
+    Heapify_check FirstCheck;       // Call: F_FirstCheck_Albero_MaxMin - F_FirstCheck_Array_MaxMin
+    Heapify_check SecondCheck;      // Call: F_SecondCheck_Alebro_MaxMin - F_SecondCheck_Array_MaxMin
+    Heapify_scambio Scambio;        // Call: F_Scambio_Albero - F_Scambio_Array
+    StampaHeap Stampa;              // Call: F_stampa_array - F_stampa_Albero
+    StampaTipo StampaElemento;      // Call: F_stampa_intero/float/carattere/stringa
+    Estrai_minmax EstraiMinMax;     // Call: F_estrai_minmax_array - F_estrai_minmax_albero
+    Decrease_key DecreaseKey;       // Call: F_decrease_key_array - F_decrease_key_albero
+    Increase_key IncreaseKey;       // Call: F_increase_key_array - F_increase_key_albero
+    Inserisci_elemento InserisciElem;   // Call: F_inserisci_elemento_array - F_inserisci_elemento_albero
+    Prendi_input PrendiInput;           // Call: F_prendi_intero/float/carattere/stringa
+    Cancella_elemento CancellaElem;     // Call: F_cancella_elemento_array - F_cancella_elemento_albero
+    Distruggi_tipo_elemento DistruggiTipoElem;  // Call: F_distruggi_elem_array_intero/float/carattere/stringa
+    Dealloca DeallocaStruttura;         // Call: F_dealloca_array - F_dealloca_albero
 };
 
 

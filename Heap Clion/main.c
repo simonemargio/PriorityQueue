@@ -6,6 +6,7 @@
 
 int main()
 {
+    printf("\nLaboratorio di Algoritmi e strutture dati: progetto libreria gestione Heap (array e alberi).\nSimone Margio N86001098.\n\n");
     F_start();
     return 0;
 }

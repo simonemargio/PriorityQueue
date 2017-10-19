@@ -6,7 +6,7 @@
 #include <limits.h>
 #define DIMARRMASK 32
 #define DIM_STRINGA 11
-//#include "L_Utility.h"
+#include "L_Utility.h"
 
 void F_start()
 {
@@ -19,6 +19,8 @@ void F_start()
     Heap = F_info_heap(Heap);   // Ricava dall'utente tutte le informazioni sulla costruzione dell'heap
     Heap = F_crea_heap(Heap);   // Crea la struttura (array o albero) scelto dall'utente
     F_costruisci_heap(Heap);    // Applica le proprietà heap
+    if(Heap!=NULL) puts("\nCreazione heap completata! Puoi visualizzarlo mediante la funzione di stampa.");
+    else {puts("\nError: creazione heao non riuscita!\n"); exit(-9);}
 
     do
     {
@@ -41,7 +43,7 @@ void F_start()
                 if(Heap->heapsize > 1)
                     F_estrai_minmax(Heap);
                 else
-                    if(Heap->heapsize == 1) puts("Presente solo un elmento!\n");
+                    if(Heap->heapsize == 1) puts("Operazione non consentita, e' presente un solo elemento!\n");
                     else puts("Struttura non presente!\n");
             break;
 
@@ -72,8 +74,6 @@ void F_start()
     Heap->DeallocaStruttura(Heap);
     Heap->struttura = NULL;
     free(Heap->struttura);
-
-    return;
 }
 
 /* Menu' principale per la gestione heap */
@@ -135,7 +135,7 @@ int F_tipo_heap()
 {
     int scelta=0;
 
-    puts("\nDato presente nell'heap");
+    puts("\nDato presente nell'heap:");
     puts("1] Interi");
     puts("2] Float");
     puts("3] Caratteri");
@@ -152,7 +152,7 @@ int F_max_min_heap()
     int scelta=0;
 
 
-    puts("\nTipologia di heap");
+    puts("\nTipologia di heap:");
     puts("1] Minimo");
     puts("2] Massimo");
     printf("\nSeleziona tramite valore numerico:");
@@ -166,7 +166,7 @@ int F_abr_arr()
 {
     int scelta=0;
 
-    puts("Struttura da usare");
+    puts("Struttura heap da usare:");
     puts("1] Albero");
     puts("2] Array");
     printf("\nSeleziona tramite valore numerico:");
@@ -185,16 +185,13 @@ int F_seleziona(int dim,char minimo,char massimo,int escludi)
      * massimo: valore massimo che puo' essere preso
      * escludi: il valore preso in input non deve essere minore uguale del valore escludi
      * */
-
-    char tmp[dim],c='*';
+    char tmp[dim],c='*',*ptr;
     int intero_preso=0,i=0,flag=0;
-    fflush(stdin);
 
     do
     {
-        while( i<dim && (c= (char) getchar()) != '\n' && c != EOF )
+        while( (c= (char) getchar()) != '\n' && i<dim && c != EOF )
         {
-            printf("\n%c<-\n\n",c);
             if(c>=minimo && c<=massimo)
             {
                 tmp[i]=c;
@@ -202,14 +199,14 @@ int F_seleziona(int dim,char minimo,char massimo,int escludi)
             }
 
         }
-        sscanf(tmp,"%d",&intero_preso);
+        intero_preso = (int) strtol(tmp, &ptr, 10);
 
         if(intero_preso<=escludi)
         {
             printf("Valore non corretto\nInserisci di nuovo:");
 
             /* Inizializzo vettore */
-            for(i=0;i<10;i++)
+            for(i=0;i<dim;i++)
                 tmp[i]='*';
 
             i=0;
@@ -387,15 +384,13 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
            Heap->DeallocaStruttura = F_dealloca_array;
         break;
         default:
-            puts("Error: selezione delle tipologia di struttura heap non definita!\n");
+            puts("Error: selezione delle tipologia di struttura heap non definita!\nUscita dal programma...\n");
             exit(-1);
-           // break;
     }
 
     switch(tipo_heap)
     {
         case 1: // Interi
-            puts("Ineri");
             Heap->tipo_elem = F_crea_intero;
             Heap->StampaElemento = F_stampa_intero;
             Heap->PrendiInput = F_prendi_intero;
@@ -407,26 +402,30 @@ void F_aggiungi_info(StructHeap Heap,int dim,int tipo_heap,int max_min,int abr_a
            Heap->tipo_elem = F_crea_float;
            Heap->StampaElemento = F_stampa_float;
            Heap->PrendiInput = F_prendi_float;
+            if(abr_arr==2) Heap->DistruggiTipoElem = F_distruggi_elem_array_float;
+            else Heap->DistruggiTipoElem = F_distruggi_elem_albero_float;
         break;
 
         case 3: // caratteri
             Heap->tipo_elem = F_crea_carattere;
             Heap->StampaElemento = F_stampa_carattere;
             Heap->PrendiInput = F_prendi_carattere;
+            if(abr_arr==2) Heap->DistruggiTipoElem = F_distruggi_elem_array_carattere_stringa;
+            else Heap->DistruggiTipoElem = F_distruggi_elem_albero_carattere_stringa;
         break;
 
         case 4: // Stringhe
             Heap->tipo_elem = F_crea_stringa;
             Heap->StampaElemento = F_stampa_stringa;
             Heap->PrendiInput = F_prendi_stringa;
+            if(abr_arr==2) Heap->DistruggiTipoElem = F_distruggi_elem_array_carattere_stringa;
+            else Heap->DistruggiTipoElem = F_distruggi_elem_albero_carattere_stringa;
         break;
 
         default:
-            puts("Error: selezione del tipo di elemento dell'heap non definito!\n");
+            puts("Error: selezione del tipo di elemento dell'heap non definito!\nUscita dal programma...\n");
             exit(-2);
-           // break;
     }
-
 }
 
 /* Generazione casuale di un valore intero */
@@ -443,8 +442,6 @@ void *F_crea_intero()
 void F_stampa_intero(void *elem)
 {
     printf(" %d|",*((int *)elem));
-
-    return;
 }
 
 /* Generazione casuale di un valore float */
@@ -467,7 +464,7 @@ void *F_prendi_float()
 
     printf("\nTipologia di elemento di heap: FLOAT. Inserire la parte intera:");
 
-    while( i<DIM_STRINGA+2 && (c= (char) getchar()) != '\n' && c != EOF )
+    while( ((c= (char) getchar()) != '\n') &&  (i<DIM_STRINGA+2) && (c != EOF) )
     {
         if(c>='0' && c<='9')
         {
@@ -482,7 +479,7 @@ void *F_prendi_float()
 
     if(i<DIM_STRINGA+2)
     {
-        printf("Ora inserire la Parte decimale:");
+        printf("Ora inserire la parte decimale:");
 
         while( i<DIM_STRINGA+2 && (c= (char) getchar()) != '\n' && c != EOF )
         {
@@ -496,8 +493,7 @@ void *F_prendi_float()
         tmp[i]='\0';
     }
 
-    sscanf(tmp,"%f",&ftemp);
-
+    ftemp=strtof(tmp,NULL);
     void *elemento=malloc(sizeof(float));
     memcpy(elemento,&ftemp,sizeof(float));
 
@@ -508,10 +504,9 @@ void *F_prendi_float()
 void F_stampa_float(void *elem)
 {
     printf(" %f|",*((float *)elem));
-    return;
 }
 
-// CARATTERE
+/* Funzione per la creazione di un elemento carattere */
 void *F_crea_carattere()
 {
     /* DICHIARAZIONE VARIABILI */
@@ -531,7 +526,8 @@ void *F_crea_carattere()
             min=97,max=122;
             break;
         default:
-            puts("Errore creazione carattere!");
+            puts("Error: creazione carattere non riuscita, inserimento carattere di dafault!");
+            min=65,max=90;
             break;
 
     }
@@ -568,14 +564,12 @@ void *F_prendi_carattere()
     memcpy(elemento,&c,sizeof(char));
 
     return elemento;
-    return NULL;
 }
 
 /* Funzione per la stampa di un carattere */
 void F_stampa_carattere(void *elem)
 {
     printf(" %c|",*((char *)elem));
-    return;
 }
 
 // STRINGA
@@ -612,7 +606,8 @@ void *F_crea_stringa()
                 min=48,max=57;
                 break;
             default:
-                puts("Errore creazione stringa!");
+                puts("Error: creazione stringa non riuscita, inserimento carattere di stringa di dafault!");
+                min=65,max=90;
                 break;
         }
 
@@ -651,14 +646,12 @@ void *F_prendi_stringa()
 void F_stampa_stringa(void *elem)
 {
     printf(" %s|",((char *)elem));
-    return;
 }
 
 /* Funzione per la generazione di priorita' */
 int F_genera_priorita()
 {
     int i=rand() % (100 + 1 - 1) + 1;
-    printf("Priorita: %d\n",i);
 
     return i;
 }
@@ -673,7 +666,6 @@ void F_costruisci_heap(StructHeap Heap)
         n--;
     }
 
-    return;
 }
 
 /* Heapify: primo controllo per array */
@@ -790,31 +782,27 @@ int F_SecondCheck_Alebro_MaxMin(StructHeap Heap, int r,int mas)
     /* Prende i nodi per effettuare i confronti delle priorita' */
     Albero nodo_r=F_preleva_nodo(Heap,r);
     Albero nodo_mas=F_preleva_nodo(Heap,mas);
-   // printf("\n2 Preso il nodo di indice r:%d | mas:%d\n",r,mas);
+
         if(r<Heap->heapsize)
         {
             int priorita_r = nodo_r->coda->priorita;
             int priorita_mas = nodo_mas->coda->priorita;
-     //       printf("\n2 Ho preso le loro due priorira r:%d | mas%d\n",priorita_r,priorita_mas);
 
             if(Heap->max_min == 1) // Minimo
             {
                 if(priorita_r<priorita_mas)
                 {
-                    //printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
                     mas=r;
                 }
             } else // Massimo
             {
                 if(priorita_r>priorita_mas)
                 {
-                    //printf("\n2 La priorita %d e' piu grande di %d",priorita_r,priorita_mas);
                     mas=r;
                 }
             }
 
         }
-   // printf("\n2 Ritorno con priorira mas definitiva %d\n",mas);
 
     return mas;
 }
@@ -847,7 +835,6 @@ Albero F_preleva_nodo(StructHeap Heap,int indice)
 /* Funzione per lo scambio delle informazioni tra due celle dell'array */
 void F_Scambio_Array(StructHeap Heap,int i,int mas)
 {
-   // puts("\nFatto scambio");
     Array S = Heap->struttura;
 
     int tpriorita = S[i].coda->priorita;
@@ -856,8 +843,6 @@ void F_Scambio_Array(StructHeap Heap,int i,int mas)
     S[i].coda->elem = S[mas].coda->elem;
     S[mas].coda->priorita = tpriorita;
     S[mas].coda->elem = telem;
-
-    return;
 }
 
 /* Funzione per lo scambio delle informazioni tra due nodo dell'albero */
@@ -869,26 +854,18 @@ void F_Scambio_Albero(StructHeap Heap,int i,int mas)
     int priorita_i = nodo_i->coda->priorita;
     void *telem = nodo_i->coda->elem;
 
-  //  printf("\nInizio lo scambio della priorira i:%d con la prioria mas:%d\n",i,mas);
-   // printf("\nIn i ho %d. In mas ho %d",nodo_i->coda->priorita,nodo_mas->coda->priorita);
-
     nodo_i->coda->priorita = nodo_mas->coda->priorita;
     nodo_i->coda->elem = nodo_mas->coda->elem;
 
     nodo_mas->coda->elem = telem;
     nodo_mas->coda->priorita = priorita_i;
 
-  //  printf("\nHo terminato lo scambio ora ho in i ho %d. In mas ho %d",nodo_i->coda->priorita,nodo_mas->coda->priorita);
-
-    return;
 }
 
 /* Funzione per la stampa dell'heap */
 void F_stampa_heap(StructHeap Heap)
 {
     Heap->Stampa(Heap); // Richiama: F_stampa_array || F_stampa_albero
-
-    return;
 }
 
 /* Provvede alla stampa dell'array */
@@ -897,23 +874,23 @@ void F_stampa_array(StructHeap Heap)
     int i=0;
     Array S = Heap->struttura;
 
-    puts("Ecco l'array:");
+    puts("\nArray [ indice ]:[ priorita' - elemento ]:\n");
     for(i=0;i<Heap->heapsize;i++)
     {
+        printf("[%d]:",i+1);
         F_stampa_priorita(S[i].coda->priorita);
         Heap->StampaElemento(S[i].coda->elem); // Richiiama: F_stampa_intero||float||carattere||stringa
+        puts("");
     }
 
-    return;
 }
 
 /* Provvede alla stampa dell'albero */
 void F_stampa_albero(StructHeap Heap)
 {
+    puts("Albero [ priorita' - elemento ]:\n");
     Albero T = Heap->struttura;
     F_preorder(T,Heap->StampaElemento); // Stampa preorder con l'invio della procedura per la stampa del tipo di elemento
-
-    return;
 }
 
 /* Stampa preorder dell'albero */
@@ -926,16 +903,12 @@ void F_preorder(Albero T,StampaTipo Stampa)
         F_preorder(T->ptrSx,Stampa);
         F_preorder(T->ptrDx,Stampa);
     }
-
-    return;
 }
 
 /* Funzione per la stampa della priorita' */
 void F_stampa_priorita(int elem)
 {
     printf("|%d -",elem);
-
-    return;
 }
 
 /* Funzione per l'estrazione del primo elemento di un Min/Max array */
@@ -971,8 +944,6 @@ void F_stampa_elem_coda(StructHeap Heap,Coda minmax)
 {
     F_stampa_priorita(minmax->priorita);
     Heap->StampaElemento(minmax->elem); // Richiama: F_stampa_intero||float||carattere||stringa
-
-    return;
 }
 
 /* Funzione per l'estrazione del primo elemento di un Min/Max dell'albero */
@@ -991,7 +962,7 @@ void *F_estrai_minmax_albero(StructHeap Heap)
         F_Scambio_Albero(Heap,0,Heap->heapsize-1); // Scambio i valori della radice con quelli dell'ultima foglia
         F_elimina_foglia(Heap); // Elimino la foglia
         F_heapify(Heap,0);  // Richiamo heapify per ripristinare la proprieta' heap
-
+        puts("\n");
     } else
         puts("Error: struttura non presente!\n");
 
@@ -1004,25 +975,22 @@ void F_elimina_foglia(StructHeap Heap)
     Albero ultima_foglia = F_preleva_nodo(Heap,Heap->heapsize-1);       // Prelevo la foglia da eliminare
     ultima_foglia->coda->priorita = -1;
     Albero padre_foglia = F_preleva_nodo(Heap,((Heap->heapsize-2)/2)); // Prelevo il padre della foglia
+    puts("\nLa foglia che verra' utilizzata e':");
     F_stampa_elem_coda(Heap,padre_foglia->coda);
 
     Heap->DistruggiTipoElem(Heap,Heap->heapsize-1); // Richiama: F_distruggi_elemento_array/albero||intero||float||carattere||stringa
     if(padre_foglia->ptrDx != NULL) // Elimino il legame con il figlio
     {
-        //puts("\nHO MESSO DESTRA NULL");
         padre_foglia->ptrDx = NULL;
     }
     else{
       if(padre_foglia->ptrSx != NULL)
       {
-          //puts("\nHO MESSO SINISTRA NULL");
           padre_foglia->ptrSx = NULL;
       }
     }
     free(ultima_foglia);
     Heap->heapsize=Heap->heapsize-1;
-
-    return;
 }
 
 /* Funzione per decrementare la priorita' di un elemento con struttura array */
@@ -1046,8 +1014,6 @@ void F_decrease_key_array(StructHeap Heap)
         else    // Massimo
             F_esegui_decrease_key_array_max(Heap,i,val);
     }
-
-    return;
 }
 
 /* Funzione decrease per Max array */
@@ -1060,7 +1026,6 @@ void F_esegui_decrease_key_array_max(StructHeap Heap,int i,int val)
         arr[i].coda->priorita = val;
         F_heapify(Heap,i);
     }
-    return;
 }
 
 /* Funzione decrease per Min array */
@@ -1072,17 +1037,13 @@ void F_esegui_decrease_key_array_min(StructHeap Heap,int i,int val)
     else
     {
         arr[i].coda->priorita = val;
-        //printf("\nINDICE PASSATO: %d\n",i);
-        //printf("\nINDICE DEL PADRE: %d\n",((i+1)/2)-1);
+
         while(i>0 && arr[i].coda->priorita < arr[(((i+1)/2)-1)].coda->priorita)
         {
             F_Scambio_Array(Heap,i,(((i+1)/2)-1));
             i = (((i+1)/2)-1);
-          //  printf("\nINDICE DEL PADRE CICLO: %d\n",((i+1)/2)-1);
         }
     }
-
-    return;
 }
 
 /* Permette la coretta selezione dell'indice scelto dall'utente */
@@ -1119,7 +1080,6 @@ void F_decrease_key_albero(StructHeap Heap)
         else    // Massimo
             F_esegui_decrease_key_albero_max(Heap,i,val);
     }
-    return;
 }
 
 /* Funzione decrease per Max albero */
@@ -1134,8 +1094,6 @@ void F_esegui_decrease_key_albero_max(StructHeap Heap,int i,int val)
         nodo->coda->priorita = val;
         F_heapify(Heap,i);
     }
-
-    return;
 }
 
 /* Funzione decrease per Min albero */
@@ -1146,10 +1104,9 @@ void F_esegui_decrease_key_albero_min(StructHeap Heap,int i, int val)
     if(val > nodo->coda->priorita) puts("\nNuova chiave piu' grande!");
     else
     {
-       // printf("\n->|%d|<- INDICE PASSATO\n",i);
         nodo->coda->priorita = val;
         Albero nodo_padre = F_preleva_nodo(Heap,((i+1)/2)-1);
-       // printf("\n->|%d|<- INDICE\n", ((i+1)/2)-1);
+
         while(i > 0 && nodo_padre->coda->priorita > nodo->coda->priorita)
         {
             F_Scambio_Albero(Heap,i,((i+1)/2)-1);
@@ -1158,7 +1115,6 @@ void F_esegui_decrease_key_albero_min(StructHeap Heap,int i, int val)
             nodo = F_preleva_nodo(Heap,i);
         }
     }
-    return;
 }
 
 /* Funzione per incrementare la priorita' di un elemento con struttura array */
@@ -1182,8 +1138,6 @@ void F_increase_key_array(StructHeap Heap)
         else
             F_esegui_increase_key_array_max(Heap,i,val);
     }
-
-    return;
 }
 
 /* Funzione increase per Max array */
@@ -1201,7 +1155,6 @@ void F_esegui_increase_key_array_max(StructHeap Heap,int i,int val)
             i = (((i+1)/2)-1);
         }
     }
-    return;
 }
 
 /* Funzione increase per Min array */
@@ -1214,7 +1167,6 @@ void F_esegui_increase_key_array_min(StructHeap Heap,int i,int val)
         arr[i].coda->priorita = val;
         F_heapify(Heap,i);
     }
-    return;
 }
 
 /* Funzione per incrementare la priorita' di un elemento con struttura albero */
@@ -1237,8 +1189,6 @@ void F_increase_key_albero(StructHeap Heap)
         else    // Massimo
             F_esegui_increase_key_albero_max(Heap,i,val);
     }
-
-    return;
 }
 
 /* Funzione increase per Max albero */
@@ -1259,8 +1209,6 @@ void F_esegui_increase_key_albero_max(StructHeap Heap,int i,int val)
             nodo = F_preleva_nodo(Heap,i);
         }
     }
-
-    return;
 }
 
 /* Funzione increase per Min albero */
@@ -1274,7 +1222,6 @@ void F_esegui_increase_key_albero_min(StructHeap Heap,int i, int val)
         nodo->coda->priorita = val;
         F_heapify(Heap,i);
     }
-    return;
 }
 
 /* Funzione per l'inserimento di un nuovo elemento in una struttura heap array */
@@ -1289,13 +1236,13 @@ void F_inserisci_elemento_array(StructHeap Heap)
     Heap->heapsize=Heap->heapsize+1;    // Setto la dimensione giusta
     new_arr[Heap->heapsize-1].coda=elemento_coda; // Associo l'elemento creato
     Heap->struttura = new_arr;
-    //printf("\n\nELM: %d \n\n",new_arr[Heap->heapsize-1].coda->priorita);
+
     int i = Heap->heapsize-1;
 
     // Ripristino proprieta' heap
     if(Heap->max_min==1) // Minimo
     {
-        // printf("\n\n%d\n\n",i);
+
         while(i>0 && new_arr[i].coda->priorita < new_arr[(((i+1)/2)-1)].coda->priorita)
         {
             F_Scambio_Array(Heap,i,(((i+1)/2)-1));
@@ -1304,14 +1251,13 @@ void F_inserisci_elemento_array(StructHeap Heap)
     }
     else // Massimo
     {
-        // printf("\n\n%d\n\n",i);
+
         while(i>0 && new_arr[i].coda->priorita > new_arr[(((i+1)/2)-1)].coda->priorita)
             {
                 F_Scambio_Array(Heap,i,(((i+1)/2)-1));
                 i = (((i+1)/2)-1);
             }
     }
-    return;
 }
 
 /* Funzione per l'inserimento di un nuovo elemento in una struttura heap albero */
@@ -1350,22 +1296,20 @@ void F_inserisci_elemento_albero(StructHeap Heap)
             nodo = F_preleva_nodo(Heap,i);
         }
     }
-
-    return;
 }
 
 /* Funzione per prelevare un valore intero */
 void *F_prendi_intero()
 {
     /* DICHIARAZIONI VARIABILI */
-    char tmp[]="**********",c='*';
+    char tmp[]="**********",c='*',*ptr;
     int intero_preso=0,i=0,flag=0;
 
     printf("\nTipologia di elemento di heap: INTERI.\nI valori vengono presi in modulo.\nInserire un valore intero (Max: %d):",INT_MAX);
 
     do
     {
-        while( i<10 && (c= (char) getchar()) != '\n' && c != EOF )
+        while( ((c= (char) getchar()) != '\n') && (i<10) && (c != EOF) )
         {
             if(c>='0' && c<='9')
             {
@@ -1374,7 +1318,8 @@ void *F_prendi_intero()
             }
 
         }
-        sscanf(tmp,"%d",&intero_preso);
+
+        intero_preso = (int) strtol(tmp, &ptr, 10);
 
         if(intero_preso<0) // Superato il liminte viene preso un valore negativo.
         {
@@ -1411,8 +1356,6 @@ Coda F_genera_elememento_coda_utente(StructHeap Heap)
     nuovo_elem->priorita=priorita;
     nuovo_elem->elem=elem;
 
-    //printf("Priorita inserita: %d - Elem inserito: %d\n",nuovo_elem->priorita,*((int *)nuovo_elem->elem));
-
     return nuovo_elem;
 }
 
@@ -1447,8 +1390,6 @@ void F_cancella_elemento_array(StructHeap Heap)
         Heap->DistruggiTipoElem(Heap,Heap->heapsize-1);
         Heap->heapsize=Heap->heapsize-1;
     }
-
-    return;
 }
 
 /* Funzione per la cancellazione di un elemento nella struttura heap albero */
@@ -1465,12 +1406,9 @@ void F_cancella_elemento_albero(StructHeap Heap)
         Albero foglia = F_preleva_nodo(Heap, Heap->heapsize - 1);
         Albero  padre_foglia = F_preleva_nodo(Heap,((((Heap->heapsize-1)+1)/2)-1));
 
-       // printf("\nI %d - - HPS %d",i,Heap->heapsize);
-
         if(Heap->heapsize>1 && i!=Heap->heapsize-1)
         {
             Albero nodo = F_preleva_nodo(Heap, i);
-         //   printf("\nELEM SELEZIONATO: %d",nodo->coda->priorita);
 
             if (foglia->coda->priorita > nodo->coda->priorita) // Eseguo increase
             {
@@ -1487,7 +1425,6 @@ void F_cancella_elemento_albero(StructHeap Heap)
             }
         }
 
-        //  printf("\nHEPS:%d\n",Heap->heapsize);
         Heap->DistruggiTipoElem(Heap,Heap->heapsize-1);
 
         if(Heap->heapsize-1==0) // Non sono più presenti elementi nella struttura
@@ -1504,25 +1441,43 @@ void F_cancella_elemento_albero(StructHeap Heap)
         Heap->heapsize=Heap->heapsize-1;
 
     }
-    return;
 }
 
-/* Eliminazione elemento array intero */
+/* Eliminazione elemento array o albero del tipo scelto*/
 void F_distruggi_elem_array_intero(StructHeap Heap,int indice)
 {
     Array A = Heap->struttura;
-    printf("\nELIMINO %d\n",A[indice].coda->priorita);
     free(((int *)A[indice].coda->elem));
-    return;
 }
 
-/* Eliminazione elemento albero intero */
 void F_distruggi_elem_albero_intero(StructHeap Heap,int indice)
 {
     Albero nodo = F_preleva_nodo(Heap,indice);
-    printf("\nELIMINO %d\n",nodo->coda->priorita);
     free(((int *)nodo->coda->elem));
-    return;
+}
+
+void F_distruggi_elem_array_float(StructHeap Heap,int indice)
+{
+    Array A = Heap->struttura;
+    free(((float *)A[indice].coda->elem));
+}
+
+void F_distruggi_elem_albero_float(StructHeap Heap,int indice)
+{
+    Albero nodo = F_preleva_nodo(Heap,indice);
+    free(((float *)nodo->coda->elem));
+}
+
+void F_distruggi_elem_array_carattere_stringa(StructHeap Heap,int indice)
+{
+    Array A = Heap->struttura;
+    free(((char *)A[indice].coda->elem));
+}
+
+void F_distruggi_elem_albero_carattere_stringa(StructHeap Heap,int indice)
+{
+    Albero nodo = F_preleva_nodo(Heap,indice);
+    free(((char *)nodo->coda->elem));
 }
 
 /* Esegue la deallocazione della struttura array */
@@ -1536,8 +1491,6 @@ void F_dealloca_array(StructHeap Heap)
         Heap->DistruggiTipoElem(Heap,i); // Richiama: F_distruggi_elem_array_intero||float||carattere||stringa
         free(arr[i].coda);
     }
-
-    return;
 }
 
 /* Prepara la deallocazione della struttura albero */
@@ -1545,8 +1498,6 @@ void F_dealloca_albero(StructHeap Heap)
 {
     Albero T = Heap->struttura;
     F__dealloca_albero(T);  // Effettua la deallocazione
-
-    return;
 }
 
 /* Deallocazione di una struttura albero */
@@ -1559,7 +1510,6 @@ void F__dealloca_albero(Albero T)
         free(T->coda);
         free(T);
     }
-    return;
 }
 
 /* Funzione per la stampa del primo elemento */
@@ -1582,6 +1532,4 @@ void F_stampa_minmax(StructHeap Heap)
     }
     else
         puts("Struttura non presente!\n");
-
-    return;
 }
